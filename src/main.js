@@ -7,7 +7,7 @@ var Config = (function () {
     };
     return Config;
 }());
-Config.version = '0.1.4';
+Config.version = '0.1.6';
 var ValidatorConfig = (function () {
     function ValidatorConfig(r) {
         this.ValidationSettings = {
@@ -21,18 +21,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^[A-Za-z]{1,}$/
         };
@@ -40,18 +37,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^(.+){1,}$/
         };
@@ -59,18 +53,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^[0-9]{1,}$/
         };
@@ -78,18 +69,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^[0-9]{5}$/
         };
@@ -97,18 +85,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be an email'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^([a-zA-Z0-9_\-\.]*)@([a-zA-Z0-9_\-]+)\.([a-zA-Z]{2,5})$/
         };
@@ -116,13 +101,11 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
@@ -135,18 +118,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^([0-9]{10,10})$/
         };
@@ -154,18 +134,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^([0-9]{2,2})\/([0-9]{2,2})\/([0-9]{4,4})$/
         };
@@ -173,18 +150,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             matchPattern: /^([A-Z]{2})$/
         };
@@ -192,18 +166,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             minCount: 1
         };
@@ -211,18 +182,15 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             minCount: 1
         };
@@ -230,36 +198,30 @@ var ValidatorConfig = (function () {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             }
         };
         this.custom = {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
                 "class": 'valid-success',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             failed: {
                 "class": 'valid-failed',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             },
             empty: {
                 "class": 'valid-empty',
-                "function": '',
-                message: 'This field must be populated'
+                "function": ''
             }
         };
         // Getting TRUE/FALSE settings

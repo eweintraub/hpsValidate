@@ -1,7 +1,7 @@
 /// <reference path="index.d.ts" />
 
 class Config {
-    public static version: string = '0.1.4';
+    public static version: string = '0.1.6';
     public static ver(): void {
         console.log(this.version);
     }
@@ -90,18 +90,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^[A-Za-z]{1,}$/
     }
@@ -109,18 +106,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^(.+){1,}$/
     }
@@ -128,18 +122,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^[0-9]{1,}$/
     }
@@ -147,18 +138,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^[0-9]{5}$/
     }
@@ -166,18 +154,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be an email'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^([a-zA-Z0-9_\-\.]*)@([a-zA-Z0-9_\-]+)\.([a-zA-Z]{2,5})$/
     }
@@ -185,13 +170,11 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
@@ -204,18 +187,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^([0-9]{10,10})$/
     }
@@ -223,18 +203,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^([0-9]{2,2})\/([0-9]{2,2})\/([0-9]{4,4})$/
     }
@@ -242,18 +219,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         matchPattern: /^([A-Z]{2})$/
     }
@@ -261,18 +235,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         minCount: 1
     }
@@ -280,18 +251,15 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         minCount: 1
     }
@@ -299,36 +267,30 @@ class ValidatorConfig {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         }
     }
     public custom = {
         checking: {class: 'valid-checking',function: ''},
         success: {
             class: 'valid-success',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         failed: {
             class: 'valid-failed',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         },
         empty: {
             class: 'valid-empty',
-            function: '',
-            message: 'This field must be populated'
+            function: ''
         }
     }
 }

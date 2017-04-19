@@ -47,6 +47,7 @@ The input(s) should be inside an element with the class "input-wrapper".  If the
 
 >data-error-failed: identifies the text displayed if field fails validation
 
+## Javascript
 
 ```javascript
 $(document).hpsValidate();
@@ -145,8 +146,12 @@ $('form').hpsValidate('update');
         Satisfying radio button and checkboxes will now properly enable the submit button
 
 # 0.1.5
-    Additions:
-        Added error tooltips!
+Additions:
+    Added custom data-validate types!  See [Usage](Usage) for...usage.
+
+# 0.1.6
+Additions:
+    Added error tooltips! See [Usage](Usage)
     
 
 
