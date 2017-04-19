@@ -309,7 +309,6 @@ $.fn.hpsValidate = function( options?:any ){
                 if(v.ValidationSettings.disableSubmit) disableSubmit(this[0]);
                 AddValidationToElement(this[0],v);
             }
-            
 };
 var ValidateElement = function(target:any ,v: any){
     let identifier:string = v.ValidationSettings.identifier + ':not(.do-not-validate)';

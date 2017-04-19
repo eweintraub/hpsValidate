@@ -127,30 +127,34 @@ $('.datepicker').datepicker({
 $('form').hpsValidate('update');
 ```
 
-## Changelog
-# 0.1.2
-    Bug Fixes:
-        Fixed bug that caused validator to skip groups of checkboxes that were not immediate children of .input-wrapper
+# Changelog
+### 0.1.2
+**Bug Fixes:**
+    Fixed bug that caused validator to skip groups of checkboxes that were not immediate children of .input-wrapper
 
-# 0.1.3
-    Additions:
-        Added hpsValidator('Validate') method
+### 0.1.3
+**Additions:**
+    Added hpsValidator('Validate') method
 
-# 0.1.4
-    Additions:
-        Added radioButton type support
-        Added ('validate') method
-        Added ('update') method
+**Bug Fixes:**
+    various
 
-    Bug Fixes:
-        Satisfying radio button and checkboxes will now properly enable the submit button
+### 0.1.4
+**Additions:**
+    Added radioButton type support
+    Added ('validate') method
+    Added ('update') method
 
-# 0.1.5
-Additions:
+
+**Bug Fixes:**
+    Satisfying radio button and checkboxes will now properly enable the submit button
+
+### 0.1.5
+**Additions:**
     Added custom data-validate types!  See [Usage](Usage) for...usage.
 
-# 0.1.6
-Additions:
+### 0.1.6
+**Additions:**
     Added error tooltips! See [Usage](Usage)
     
 
