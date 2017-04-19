@@ -296,7 +296,7 @@ class ValidatorConfig {
 }
 
 $.fn.hpsValidate = function( options?:any ){
-    console.log(options); 
+    //console.log(options); 
     var v = new ValidatorConfig(options || {});
             
             if(options == 'validate'){
@@ -648,7 +648,6 @@ var addToolTip = function(element: any){
 //This will chekc to see if fields are using one field or multiple (ie. SSN or phone number)
 var checkForOneOrMultipleFields = function(el: any, type: string, rules: any){
     if(el.classList.contains('do-not-validate')) {
-        console.log('contains dnv');
         return; //This should prevent validating the rest of the multiple fields
     }
     let p = el.parentNode;
@@ -685,9 +684,9 @@ var guid = function() {
   return s4() + s4();
 }
 
-var end = function(){
-    console.log('really want to stop everything');
-}
+// var end = function(){
+    
+// }
 
 var getParentWrapperElement = function(el: any): any{
     let parent;
