@@ -1,0 +1,54 @@
+.input-wrapper {
+    position: relative;
+}
+
+input:not(:last-child) {
+    margin-left:2%;
+}
+
+.valid-checking {
+    border-color:yellow !important;
+}
+
+.valid-empty > input {
+    border-color:#f98e2b;
+}
+
+.valid-success {
+    border-color:green !important;
+}
+.valid-success::after {
+    font-family: FontAwesome;
+    content: "\f058";
+    font-size: 30px;
+    color:green;
+    position: absolute;
+    right:5px; 
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.valid-failed::after {
+    font-family: FontAwesome;
+    content: "\f06a";
+    font-size: 30px;
+    color:red;
+    position: absolute;
+    right:5px; 
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+/*******  COMMENTS LINK ******************/
+.comments-link {
+    position:fixed;
+    top:15px;
+    right:15px;
+    font-size: 2rem;
+}

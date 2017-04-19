@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <title>Validator</title>
+</head>
+<body>
+    <div class="comments-link">
+        <a href="docs/help.md" target="_blank">Help</a>
+    </div>
+    <button type="submit" class="btn btn-primary proceed">Random</button>
+    <div class="row" id="pageForm">
+        <div class="col-md-8 offset-md-2">
+            <form id="topForm">
+                <div id="top">
+                    <div class="form-group">
+                        <label data-label>Text</label>
+                        <div class="input-wrapper row">
+                            <input 
+                                class="form-control no-validate-if-empty" 
+                                id="text" 
+                                placeholder="Enter Text" 
+                                data-validate="custom" 
+                                data-pattern="^[0-9]{3}$"
+                                data-error-empty="This field is required"
+                                data-error-failed="Please enter a number between 99 and 1000"
+                            ></div> 
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label data-label>Numbers Only</label>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="number" value="abc"></div>
+                        
+                    </div>
+                    <!--<div class="form-group">
+                        <label data-label>Mixed Text and Numbers</label>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="mixedText"></div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label data-label>Email address</label>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter email" data-validate="email"></div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label data-label>Social Security Number (Single Field)</label>
+                        <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn"></div>
+                        
+                    </div>
+                </div>
+                <div id="bottom">
+                    <div class="form-group">
+                        <label data-label>Social Security Number (Multiple Fields)</label>
+                        <div class="input-wrapper row">
+                            <input size="3" maxLength="3" class="form-control" data-validate="ssn" style="width:30%">
+                            <input size="2" maxLength="2" class="form-control" data-validate="ssn" style="width:20%">
+                            <input size="4" maxLength="4" class="form-control" data-validate="ssn" style="width:40%">
+                        </div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" data-label>Phone Number (Single Field)</label>
+                        <div class="input-wrapper row"><input maxLength="10" class="form-control" placeholder="Enter Phone Number" data-validate="phone"></div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="ssn" data-label>Phone Number (Multiple Fields)</label>
+                        <div class="input-wrapper row">
+                            <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%">
+                            <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%">
+                            <input size="4" maxLength="4" class="form-control" data-validate="phone" style="width:40%">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ssn" data-label>Phone Number (Multiple Fields with individual DIVs)</label>
+                        <small>This HTML was pulled from the registration form</small>
+                        <div class="phone-number input-wrapper">
+                            <div class="area-code tel-block-3">
+                                <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_AreaCode" maxlength="3" name="Contact.Phone_AreaCode" required="required" size="3" type="tel" value="">
+                            </div>
+
+                            <div class="tel-block-3">
+                                <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_2" maxlength="3" name="Contact.Phone_2" required="required" size="3" type="tel" value="">
+                            </div>
+
+                            <div class="tel-block-4">
+                                <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_3" maxlength="4" name="Contact.Phone_3" required="required" size="4" type="tel" value="">
+                            </div>
+                            <span class="fa form-control-feedback" aria-hidden="true"></span>
+                            <div class="help-block with-errors"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-label>Checkboxes from form</label>
+                        <div class="d-inline-block input-wrapper">
+                            <ul id="daysOfWeek">
+                                <li><input class="inline-checkbox new-field" data-val="true" data-val-required="The BTC_Monday field is required." data-validate="checkbox" id="Contact_BTC_Monday" name="Contact.BTC_Monday" type="checkbox" value="true"><input name="Contact.BTC_Monday" type="hidden" value="false"><label for="Contact_BTC_Monday" class="overlay">M</label></li>
+                                <li><input class="inline-checkbox new-field" data-val="true" data-val-required="The BTC_Tuesday field is required." data-validate="checkbox" id="Contact_BTC_Tuesday" name="Contact.BTC_Tuesday" type="checkbox" value="true"><input name="Contact.BTC_Tuesday" type="hidden" value="false"><label for="Contact_BTC_Tuesday" class="overlay">T</label></li>
+                                <li><input class="inline-checkbox new-field" data-val="true" data-val-required="The BTC_Wednesday field is required." data-validate="checkbox" id="Contact_BTC_Wednesday" name="Contact.BTC_Wednesday" type="checkbox" value="true"><input name="Contact.BTC_Wednesday" type="hidden" value="false"><label for="Contact_BTC_Wednesday" class="overlay">W</label></li>
+                                <li><input class="inline-checkbox new-field" data-val="true" data-val-required="The BTC_Thursday field is required." data-validate="checkbox" id="Contact_BTC_Thursday" name="Contact.BTC_Thursday" type="checkbox" value="true"><input name="Contact.BTC_Thursday" type="hidden" value="false"><label for="Contact_BTC_Thursday" class="overlay">T</label></li>
+                                <li><input class="inline-checkbox new-field" data-val="true" data-val-required="The BTC_Friday field is required." data-validate="checkbox" id="Contact_BTC_Friday" name="Contact.BTC_Friday" type="checkbox" value="true"><input name="Contact.BTC_Friday" type="hidden" value="false"><label for="Contact_BTC_Friday" class="overlay">F</label></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date" data-label>Date (Single Field)</label>
+                        <div class="input-wrapper row date-row date-picker-container">
+                            <input type="text" class="form-control datepicker" data-validate="date">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleSelect2" data-label>Select</label>
+                        <div class="input-wrapper">
+                            <select class="form-control" data-validate="dropdown">
+                            <option></option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            </select>
+                        </div>
+                    </div>-->
+                <button type="submit" class="btn btn-primary proceed">Submit</button>
+            </form>
+            <!--<form id="bottomForm">
+                    <div class="form-group">
+                        <label for="GenericText" data-label>Text Only</label>
+                        <div class="input-wrapper row"><input class="form-control no-validate-if-empty" id="text" placeholder="Enter State" data-validate="stateAbbr"></div>
+                        
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label for="GenericText" data-label>Numbers Only</label>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="number"></div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="GenericText" data-label>Mixed Text and Numbers</label>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="mixedText"></div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail" data-label>Email address</label>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter email" data-validate="email"></div>
+                        
+                    </div>
+                    <div class="form-group">
+                        <label for="ssn" data-label>Social Security Number (Single Field)</label>
+                        <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn"></div>
+                    </div>
+                <button type="submit" class="btn btn-primary proceed">Submit</button>
+            </form>-->
+            </div>
+        </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="src/main.js"></script>
+</body>
+</html>
