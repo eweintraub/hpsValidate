@@ -151,11 +151,11 @@ $('form').hpsValidate('update');
 
 ### 0.1.5
 **Additions:**
-    Added custom data-validate types!  See [Usage](Usage) for...usage.
+    Added custom data-validate types!  See Usage for...usage.
 
 ### 0.1.6
 **Additions:**
-    Added error tooltips! See [Usage](Usage)
+    Added error tooltips! See Usage
     
 
 
