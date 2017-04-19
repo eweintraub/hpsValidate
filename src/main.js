@@ -7,7 +7,7 @@ var Config = (function () {
     };
     return Config;
 }());
-Config.version = '0.1.6';
+Config.version = '0.1.7';
 var ValidatorConfig = (function () {
     function ValidatorConfig(r) {
         this.ValidationSettings = {
@@ -292,7 +292,10 @@ var ValidatorConfig = (function () {
     return ValidatorConfig;
 }());
 $.fn.hpsValidate = function (options) {
-    //console.log(options); 
+    //console.log(options);
+    if (!this) {
+        console.error('Unable to find hpsValidate target');
+    }
     var v = new ValidatorConfig(options || {});
     if (options == 'validate') {
         ValidateElement(this[0], v);
@@ -725,7 +728,7 @@ var checkForAllValidated = function (element, settings) {
         if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')) {
         }
         else {
-            if (jQuery(b[x]).is(':visible') || settings.validateIfHidden) {
+            if (jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden')) {
                 v = false;
                 if (settings.disableSubmit) {
                     disableSubmit(element);
@@ -771,7 +774,14 @@ var UpdateFieldValidationStatus = function (el, rules, settings, empty, success,
     checkForAllValidated(el, settings);
 };
 var addErrorMessage = function (element, message) {
-    element.setAttribute('title', message);
+    //element.setAttribute('title',message);
+    element.setAttribute('data-original-title', message);
+    if ($(element).tooltip) {
+        $(element).tooltip({
+            placement: 'right',
+            trigger: 'hover'
+        });
+    }
 };
 var empty = function () {
 };
@@ -780,14 +790,4 @@ var success = function () {
 var fail = function () {
 };
 (function () {
-    $('.datepicker').datepicker({
-        todayBtn: "linked",
-        format: "mm/dd/yyyy",
-        autoclose: true,
-        todayHighlight: true,
-        onSelect: function () {
-            $(this).closest('.date-picker-container').hpsValidate('validate');
-        }
-    });
-    $('#pageForm').hpsValidate();
 })();

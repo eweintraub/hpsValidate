@@ -1,7 +1,7 @@
 /// <reference path="index.d.ts" />
 
 class Config {
-    public static version: string = '0.1.6';
+    public static version: string = '0.1.7';
     public static ver(): void {
         console.log(this.version);
     }
@@ -296,7 +296,8 @@ class ValidatorConfig {
 }
 
 $.fn.hpsValidate = function( options?:any ){
-    //console.log(options); 
+    //console.log(options);
+    if(!this){console.error('Unable to find hpsValidate target');}
     var v = new ValidatorConfig(options || {});
             
             if(options == 'validate'){
@@ -749,7 +750,7 @@ var checkForAllValidated = (element:any,settings: any) => {
     for(var x = 0; x < b.length; ++x){
         if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')){
         } else {
-            if(jQuery(b[x]).is(':visible') || settings.validateIfHidden){
+            if(jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden')){
                 v = false;
                 if(settings.disableSubmit){
                     disableSubmit(element);
@@ -794,7 +795,14 @@ var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boo
 }
 
 var addErrorMessage = function(element: any, message: string):void {
-    element.setAttribute('title',message);
+    //element.setAttribute('title',message);
+    element.setAttribute('data-original-title',message);
+    if($(element).tooltip){
+        $(element).tooltip({
+            placement: 'right',
+            trigger: 'hover'
+        });
+    }
 }
 
 var empty = ():void => {
@@ -810,16 +818,8 @@ var fail = ():void => {
 }
 
 (function () {
-$('.datepicker').datepicker({
-    todayBtn: "linked",
-    format: "mm/dd/yyyy",
-    autoclose: true,
-    todayHighlight: true,
-    onSelect:function(){
-        $(this).closest('.date-picker-container').hpsValidate('validate');
-    }
-});
-$('#pageForm').hpsValidate();
+
+
 
 })();
 

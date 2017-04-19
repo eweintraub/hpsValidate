@@ -157,6 +157,8 @@ $('form').hpsValidate('update');
 **Additions:**
     Added error tooltips! See Usage
     
-
+### 0.1.7
+**Bug Fixes:**
+    Hidden fields were not being validated correctly
 
 ## See samples in [index](../index.html)
