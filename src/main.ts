@@ -29,7 +29,6 @@ class ValidatorConfig {
         else if(r.disableSubmit === 'false'){
             this.ValidationSettings.disableSubmit = false
         }
-
         if(r.validateIfHidden === 'true'){
             this.ValidationSettings.validateIfHidden = true
         } 
@@ -231,6 +230,22 @@ class ValidatorConfig {
         },
         matchPattern: /^([A-Z]{2})$/
     }
+    public properName = {
+        checking: { "class": 'valid-checking', "function": '' },
+        success: {
+            "class": 'valid-success',
+            "function": ''
+        },
+        failed: {
+            "class": 'valid-failed',
+            "function": ''
+        },
+        empty: {
+            "class": 'valid-empty',
+            "function": ''
+        },
+        matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/
+    };
     public checkbox = {
         checking: {class: 'valid-checking',function: ''},
         success: {
@@ -305,8 +320,7 @@ $.fn.hpsValidate = function( options?:any ){
             } else if (options == 'update'){
                 AddValidationToElement(this[0],v);
                 checkForAllValidated(this[0],v.ValidationSettings);
-            }
-            else {
+            } else {
                 if(v.ValidationSettings.disableSubmit) disableSubmit(this[0]);
                 AddValidationToElement(this[0],v);
             }
@@ -354,6 +368,7 @@ var createValidator = function(v:any,element:any,validateNow?:boolean){
         case 'number':
         case 'zipCode':
         case 'stateAbbr':
+        case 'properName':
         case 'email':
         case 'dropdown':
             var va = new Validator(v[t], v.ValidationSettings);
@@ -386,6 +401,7 @@ class Validator {
     private rules: any;
     private settings: any;
     private altElement: any;
+    private container: any;
     private lblField:any;
     private emptyMsg: string;
     private failedMsg: string;
@@ -398,7 +414,9 @@ class Validator {
         this.element = el;
         if(altElement) this.altElement = altElement;
         let elToTest = this.altElement || this.element;
+        this.container = getParentWrapperElement(elToTest);
         elToTest.classList.add('validate-watching');
+
         elToTest.addEventListener('keyup',function(){that.validate()});
         elToTest.addEventListener('click',function(){that.validate()});
         elToTest.addEventListener('change',function(){that.validate()});
@@ -415,8 +433,8 @@ class Validator {
         if(el) this.element = el;
         if(altElement) this.altElement = altElement;
         let elToTest = this.altElement || this.element;
-        elToTest.parentNode.classList.add(this.rules.checking.class);
-        if($(elToTest).is(':visible') || elToTest.classList.contains('validate-if-hidden')){
+        this.container.classList.add(this.rules.checking.class);
+        if($(this.container).is(':visible') || elToTest.classList.contains('validate-if-hidden')){
             if(elToTest.value == '' && this.settings.validateIfEmpty){
                 if(elToTest.tagName == 'SELECT') {this.fail();}
                 else {this.empty();}
@@ -445,7 +463,14 @@ class Validator {
             addErrorMessage(this.lblField,"");
         }
         elToTest.removeAttribute('data-message');
-        UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, true, false); 
+        UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, true, false);
+        let inputs = this.container.querySelectorAll('input');
+        if(inputs.length > 1){
+            for(let i = 0; i < inputs.length; ++i){
+                inputs[i].addEventListener('blur',function(){that.clear()});
+                inputs[i].addEventListener('focusout',function(){that.clear()});
+            }
+        }
         this.element.addEventListener('blur',function(){that.clear()});
         this.element.addEventListener('focusout',function(){that.clear()});
     }
@@ -458,8 +483,8 @@ class Validator {
         UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, false, true); 
     }
     private clear = ():void => {
-        this.element.parentNode.classList.remove(this.rules.success.class);
-        if(this.altElement) this.altElement.parentNode.classList.remove(this.rules.success.class);
+        this.container.classList.remove(this.rules.success.class);
+        if(this.altElement) this.container.classList.remove(this.rules.success.class);
     }
 }
 
@@ -749,8 +774,9 @@ var checkForAllValidated = (element:any,settings: any) => {
     var v = true;
     for(var x = 0; x < b.length; ++x){
         if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')){
-        } else {
-            if(jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden')){
+        } 
+        else {
+            if(jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].hasAttribute('data-always-invalid') ){
                 v = false;
                 if(settings.disableSubmit){
                     disableSubmit(element);
@@ -786,10 +812,22 @@ var enableSubmit = (element:any):void => {
 var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boolean, success: boolean, fail: boolean):void => {
         let parentWrapper = getParentWrapperElement(el);
         parentWrapper.classList.remove(rules.checking.class);
-        success ? parentWrapper.classList.add(rules.success.class) : parentWrapper.classList.remove(rules.success.class);
-        if (success) el.classList.add('validated');
-        empty ? parentWrapper.classList.add(rules.empty.class) : parentWrapper.classList.remove(rules.empty.class);
-        fail ? parentWrapper.classList.add(rules.failed.class) : parentWrapper.classList.remove(rules.failed.class);
+        if (success) {
+            el.classList.add('validated');
+            parentWrapper.classList.add(rules.success.class);
+        } else {
+            parentWrapper.classList.remove(rules.success.class);
+        }
+        if(empty){
+            parentWrapper.classList.add(rules.empty.class);
+        } else {
+            parentWrapper.classList.remove(rules.empty.class);
+        }
+        if(fail){
+            parentWrapper.classList.add(rules.failed.class);
+        } else {
+            parentWrapper.classList.remove(rules.failed.class);
+        }
         if(empty || fail) el.classList.remove('validated');
         checkForAllValidated(el, settings);
 }

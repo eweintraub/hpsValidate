@@ -22,7 +22,7 @@
         <div class="col-md-8 offset-md-2">
             <form id="topForm">
                 <div id="top">
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label data-label>Text</label>
                         <div class="input-wrapper row">
                             <input 
@@ -42,7 +42,7 @@
                     </div>
                     <div class="form-group">
                         <label data-label>Mixed Text and Numbers</label>
-                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="mixedText"></div>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="mixedText" data-always-invalid></div>
                         
                     </div>
                     <div class="form-group">
@@ -54,10 +54,10 @@
                         <label data-label>Social Security Number (Single Field)</label>
                         <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn"></div>
                         
-                    </div>
+                    </div>-->
                 </div>
                 <div id="bottom">
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label data-label>Social Security Number (Multiple Fields)</label>
                         <div class="input-wrapper row">
                             <input size="3" maxLength="3" class="form-control" data-validate="ssn" style="width:30%">
@@ -78,27 +78,25 @@
                             <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%">
                             <input size="4" maxLength="4" class="form-control" data-validate="phone" style="width:40%">
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group">
-                        <label for="ssn" data-label>Phone Number (Multiple Fields with individual DIVs)</label>
+                        <label for="phone" data-label>Phone Number (Multiple Fields with individual DIVs)</label>
                         <small>This HTML was pulled from the registration form</small>
                         <div class="phone-number input-wrapper">
                             <div class="area-code tel-block-3">
-                                <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_AreaCode" maxlength="3" name="Contact.Phone_AreaCode" required="required" size="3" type="tel" value="">
+                                <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_AreaCode" maxlength="3" name="Contact.Phone_AreaCode" required="required" size="3" type="tel" value="999">
                             </div>
 
                             <div class="tel-block-3">
-                                <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_2" maxlength="3" name="Contact.Phone_2" required="required" size="3" type="tel" value="">
+                                <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_2" maxlength="3" name="Contact.Phone_2" required="required" size="3" type="tel" value="999">
                             </div>
 
                             <div class="tel-block-4">
                                 <input class="form-control text-center new-field" data-validate="phone" id="Contact_Phone_3" maxlength="4" name="Contact.Phone_3" required="required" size="4" type="tel" value="">
                             </div>
-                            <span class="fa form-control-feedback" aria-hidden="true"></span>
-                            <div class="help-block with-errors"></div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label data-label>Checkboxes from form</label>
                         <div class="d-inline-block input-wrapper">
                             <ul id="daysOfWeek">
@@ -128,10 +126,10 @@
                             <option>5</option>
                             </select>
                         </div>
-                    </div>
+                    </div>-->
                 <button type="submit" class="btn btn-primary proceed">Submit</button>
             </form>
-            <form id="bottomForm">
+            <!--<form id="bottomForm">
                     <div class="form-group">
                         <label for="GenericText" data-label>Text Only</label>
                         <div class="input-wrapper row"><input class="form-control no-validate-if-empty" id="text" placeholder="Enter State" data-validate="stateAbbr"></div>
@@ -157,7 +155,7 @@
                         <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn"></div>
                     </div>
                 <button type="submit" class="btn btn-primary proceed">Submit</button>
-            </form>
+            </form>-->
             </div>
         </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

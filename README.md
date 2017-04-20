@@ -15,7 +15,15 @@ All fields must have a *data-validate=[]* attribute.  The accepted values at the
 
 >**date**:         /^([0-9]{2,2})\/([0-9]{2,2})\/([0-9]{4,4})$/
 
+>**stateAbbr**:    /^([A-Z]{2})$/
+
+>**properName**:   /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/
+
 >**checkbox**
+
+>**radioButton**
+
+>**custom**         Enter pattern in a data-pattern attribute (example in markup sample below)
 
 The input(s) should be inside an element with the class "input-wrapper".  If the input(s) this is the element that will have the css classes assigned to it.  Without this element the field will be validated but will not change in the UI.
 
@@ -46,6 +54,8 @@ The input(s) should be inside an element with the class "input-wrapper".  If the
 >data-error-empty: identifies the text displayed if field is empty
 
 >data-error-failed: identifies the text displayed if field fails validation
+
+>data-always-invalid: Use this attribute on an input if you do not want the form to validate and enable the submit button.  You will need to enable the button manually as the field will show success but the checkForAllValidated() function will always return false.
 
 ## Javascript
 
@@ -94,7 +104,6 @@ $(document).hpsValidate({
 ***
 
 >**.no-validate-if-empty** : **NOT CURRENTLY IMPLEMENTED** This determines if the field is always validated or only when populated.  A use case for this is middle name, if someone doesn't have a middle name that's fine but if you do it's probably not "12345".  Using this option will apply only to element with the class.  To apply globally use the *validateIfEmpty* option.
-
 
 ## Classes That Are Applied By The Library
 ***
@@ -160,5 +169,16 @@ $('form').hpsValidate('update');
 ### 0.1.7
 **Bug Fixes:**
     Hidden fields were not being validated correctly
+
+### 0.1.8
+**Additions:**
+    Added option to prevent enabling the submit button when all fields are validated.  Useful if another function is taking care of this based on other logic.
+
+### 0.1.8
+**Bug Fixes:**
+    Fixed bug that prevented success class from being removed on blur for multi-input fields.
+
+**Additions**
+    Added properName validate type
 
 ## See samples in [index](../index.html)
