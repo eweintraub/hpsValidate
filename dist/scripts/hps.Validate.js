@@ -162,6 +162,22 @@ var ValidatorConfig = (function () {
             },
             matchPattern: /^([A-Z]{2})$/
         };
+        this.properName = {
+            checking: { "class": 'valid-checking', "function": '' },
+            success: {
+                "class": 'valid-success',
+                "function": ''
+            },
+            failed: {
+                "class": 'valid-failed',
+                "function": ''
+            },
+            empty: {
+                "class": 'valid-empty',
+                "function": ''
+            },
+            matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/
+        };
         this.checkbox = {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
@@ -349,6 +365,7 @@ var createValidator = function (v, element, validateNow) {
         case 'number':
         case 'zipCode':
         case 'stateAbbr':
+        case 'properName':
         case 'email':
         case 'dropdown':
             var va = new Validator(v[t], v.ValidationSettings);
@@ -385,6 +402,7 @@ var Validator = (function () {
             if (altElement)
                 _this.altElement = altElement;
             var elToTest = _this.altElement || _this.element;
+            _this.container = getParentWrapperElement(elToTest);
             elToTest.classList.add('validate-watching');
             elToTest.addEventListener('keyup', function () { that.validate(); });
             elToTest.addEventListener('click', function () { that.validate(); });
@@ -405,8 +423,8 @@ var Validator = (function () {
             if (altElement)
                 _this.altElement = altElement;
             var elToTest = _this.altElement || _this.element;
-            elToTest.parentNode.classList.add(_this.rules.checking["class"]);
-            if ($(elToTest).is(':visible') || elToTest.classList.contains('validate-if-hidden')) {
+            _this.container.classList.add(_this.rules.checking["class"]);
+            if ($(_this.container).is(':visible') || elToTest.classList.contains('validate-if-hidden')) {
                 if (elToTest.value == '' && _this.settings.validateIfEmpty) {
                     if (elToTest.tagName == 'SELECT') {
                         _this.fail();
@@ -441,6 +459,13 @@ var Validator = (function () {
             }
             elToTest.removeAttribute('data-message');
             UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, false, true, false);
+            var inputs = _this.container.querySelectorAll('input');
+            if (inputs.length > 1) {
+                for (var i = 0; i < inputs.length; ++i) {
+                    inputs[i].addEventListener('blur', function () { that.clear(); });
+                    inputs[i].addEventListener('focusout', function () { that.clear(); });
+                }
+            }
             _this.element.addEventListener('blur', function () { that.clear(); });
             _this.element.addEventListener('focusout', function () { that.clear(); });
         };
@@ -453,9 +478,9 @@ var Validator = (function () {
             UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, false, false, true);
         };
         this.clear = function () {
-            _this.element.parentNode.classList.remove(_this.rules.success["class"]);
+            _this.container.classList.remove(_this.rules.success["class"]);
             if (_this.altElement)
-                _this.altElement.parentNode.classList.remove(_this.rules.success["class"]);
+                _this.container.classList.remove(_this.rules.success["class"]);
         };
         this.rules = rules;
         this.settings = settings;
