@@ -789,9 +789,13 @@ var checkForAllValidated = function (element, settings) {
     var v = true;
     for (var x = 0; x < b.length; ++x) {
         if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')) {
+            if (b[x].hasAttribute('data-always-invalid')) {
+                v = false;
+                return;
+            }
         }
         else {
-            if (jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].hasAttribute('data-always-invalid') || b[x].classList.contains('hidden-for-multi')) {
+            if (jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].classList.contains('hidden-for-multi')) {
                 v = false;
                 if (settings.disableSubmit) {
                     disableSubmit(element);
