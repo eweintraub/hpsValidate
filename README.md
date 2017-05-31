@@ -181,4 +181,10 @@ $('form').hpsValidate('update');
 **Additions**
     Added properName validate type
 
+### 0.2.1
+**Bug Fixes:**
+    Form will now properly validate fields that are populated on load.  Please set 'runOnLoad' to 'true'.
+
+
+
 ## See samples in [index](../index.html)

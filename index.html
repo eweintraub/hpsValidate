@@ -22,6 +22,7 @@
         <div class="col-md-8 offset-md-2">
             <form id="topForm">
                 <div id="top">
+
                     <!--<div class="form-group">
                         <label data-label>Text</label>
                         <div class="input-wrapper row">
@@ -54,10 +55,10 @@
                         <label data-label>Social Security Number (Single Field)</label>
                         <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn"></div>
                         
-                    </div>-->
+                    </div>
                 </div>
                 <div id="bottom">
-                    <!--<div class="form-group">
+                    <div class="form-group">
                         <label data-label>Social Security Number (Multiple Fields)</label>
                         <div class="input-wrapper row">
                             <input size="3" maxLength="3" class="form-control" data-validate="ssn" style="width:30%">
@@ -78,7 +79,7 @@
                             <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%">
                             <input size="4" maxLength="4" class="form-control" data-validate="phone" style="width:40%">
                         </div>
-                    </div>-->
+                    </div>
                     <div class="form-group">
                         <label for="phone" data-label>Phone Number (Multiple Fields with individual DIVs)</label>
                         <small>This HTML was pulled from the registration form</small>
@@ -96,7 +97,7 @@
                             </div>
                         </div>
                     </div>
-                    <!--<div class="form-group">
+                    <div class="form-group">
                         <label data-label>Checkboxes from form</label>
                         <div class="d-inline-block input-wrapper">
                             <ul id="daysOfWeek">
@@ -126,36 +127,41 @@
                             <option>5</option>
                             </select>
                         </div>
-                    </div>-->
-                <button type="submit" class="btn btn-primary proceed">Submit</button>
+                    </div>
+                <button type="submit" class="btn btn-primary proceed">Submit</button>-->
             </form>
-            <!--<form id="bottomForm">
+            <form id="bottomForm">
+                    <div class="form-group">
+                        <label data-label>Anything you want</label>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Text" data-validate></div>
+                        
+                    </div>
                     <div class="form-group">
                         <label for="GenericText" data-label>Text Only</label>
-                        <div class="input-wrapper row"><input class="form-control no-validate-if-empty" id="text" placeholder="Enter State" data-validate="stateAbbr"></div>
+                        <div class="input-wrapper row"><input class="form-control no-validate-if-empty" id="text" placeholder="Enter State" data-validate="stateAbbr" value="NY"></div>
                         
                     </div>
                     <div class="form-group" style="display:none">
                         <label for="GenericText" data-label>Numbers Only</label>
-                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="number"></div>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="number" value="123"></div>
                         
                     </div>
                     <div class="form-group">
                         <label for="GenericText" data-label>Mixed Text and Numbers</label>
-                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="mixedText"></div>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Number" data-validate="mixedText" value="abc123"></div>
                         
                     </div>
                     <div class="form-group">
                         <label for="exampleInputEmail" data-label>Email address</label>
-                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter email" data-validate="email"></div>
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter email" data-validate="email" value="eric@eric.com"></div>
                         
                     </div>
                     <div class="form-group">
                         <label for="ssn" data-label>Social Security Number (Single Field)</label>
-                        <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn"></div>
+                        <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn" value="333333333"></div>
                     </div>
                 <button type="submit" class="btn btn-primary proceed">Submit</button>
-            </form>-->
+            </form>
             </div>
         </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -165,7 +171,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="src/main.js"></script>
     <script type="text/javascript">
-    $('#pageForm').hpsValidate();
+    $('#pageForm').hpsValidate({
+        runOnLoad:'false'
+    });
     </script>
 </body>
 </html>

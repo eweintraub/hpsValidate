@@ -1,7 +1,7 @@
 /// <reference path="index.d.ts" />
 
 class Config {
-    public static version: string = '0.1.7';
+    public static version: string = '0.3.1';
     public static ver(): void {
         console.log(this.version);
     }
@@ -201,11 +201,11 @@ class ValidatorConfig {
     public date = {
         checking: {class: 'valid-checking',function: ''},
         success: {
-            class: 'valid-success',
+            class: 'success',
             function: ''
         },
         failed: {
-            class: 'valid-failed',
+            class: 'failed',
             function: ''
         },
         empty: {
@@ -245,6 +245,22 @@ class ValidatorConfig {
             "function": ''
         },
         matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/
+    };
+    public notNull = {
+        checking: { "class": 'valid-checking', "function": '' },
+        success: {
+            "class": 'valid-success',
+            "function": ''
+        },
+        failed: {
+            "class": 'valid-failed',
+            "function": ''
+        },
+        empty: {
+            "class": 'valid-empty',
+            "function": ''
+        },
+        matchPattern: /^.{1,}$/
     };
     public checkbox = {
         checking: {class: 'valid-checking',function: ''},
@@ -320,6 +336,8 @@ $.fn.hpsValidate = function( options?:any ){
             } else if (options == 'update'){
                 AddValidationToElement(this[0],v);
                 checkForAllValidated(this[0],v.ValidationSettings);
+            } else if (options == 'remove'){
+                createValidationRemover(this[0]);
             } else {
                 if(v.ValidationSettings.disableSubmit) disableSubmit(this[0]);
                 AddValidationToElement(this[0],v);
@@ -394,6 +412,12 @@ var createValidator = function(v:any,element:any,validateNow?:boolean){
             var va = new Validator(v1, v.ValidationSettings);
             validateNow ? va.validate(element) : va.load(element);
             break;
+        // Just check to see if it is null
+        case "":
+        case "data-validate":
+        case "true":
+            var va = new Validator(v['notNull'], v.ValidationSettings);
+            validateNow ? va.validate(element) : va.load(element);
     }
 };
 class Validator {
@@ -414,56 +438,61 @@ class Validator {
         this.element = el;
         if(altElement) this.altElement = altElement;
         let elToTest = this.altElement || this.element;
-        this.container = getParentWrapperElement(elToTest);
+        this.container = getParentWrapperElement(elToTest) || this.element.parentNode;
         elToTest.classList.add('validate-watching');
-
-        elToTest.addEventListener('keyup',function(){that.validate()});
-        elToTest.addEventListener('click',function(){that.validate()});
-        elToTest.addEventListener('change',function(){that.validate()});
+        elToTest.addEventListener('input',function(){that.validate(true)});
+        elToTest.addEventListener('click',function(){that.validate(true)});
+        elToTest.addEventListener('change',function(){that.validate(true)});
+        elToTest.addEventListener('blur',function(){that.validate(true)});
         this.lblField = getLabelElement(elToTest);
         this.emptyMsg = elToTest.getAttribute('data-error-empty') || 'This field is required';
         this.failedMsg = elToTest.getAttribute('data-error-failed') || 'Please correct this field';
-        if(this.settings.runOnLoad) this.validate();
+        this.settings.runOnLoad ? this.validate(true) : this.validate(false); // If runOnLoad is set to 'true' then the inputs will be decorated on load
         if(this.rules.keyUp){
             elToTest.addEventListener('keyup', function(){that.rules.keyUp(el)});
         }
     }
-    public validate = (el?: any, altElement?: any):void => {
+    public validate = (validateImmediately:boolean, el?: any, altElement?: any):void => {
         var re = new RegExp(this.rules.matchPattern);
         if(el) this.element = el;
         if(altElement) this.altElement = altElement;
         let elToTest = this.altElement || this.element;
-        this.container.classList.add(this.rules.checking.class);
+        try{
+            this.container.classList.add(this.rules.checking.class);
+        }
+        catch(e){
+            
+        }
         if($(this.container).is(':visible') || elToTest.classList.contains('validate-if-hidden')){
             if(elToTest.value == '' && this.settings.validateIfEmpty){
-                if(elToTest.tagName == 'SELECT') {this.fail();}
-                else {this.empty();}
+                if(elToTest.tagName == 'SELECT') {this.empty(validateImmediately);}
+                else {this.empty(validateImmediately);}
             }
             else{
-                elToTest.value != '' && re.test(elToTest.value) ? this.success() : this.fail();
+                elToTest.value != '' && re.test(elToTest.value) ? this.success(validateImmediately) : this.fail(validateImmediately);
             }
         } 
     }
-    private empty = ():void => {
+    private empty = (validateImmediately?: boolean):void => {
         let elToTest = this.altElement || this.element;
         if(this.lblField){
             addErrorMessage(this.lblField,this.emptyMsg);
         }
         if(elToTest.classList.contains('no-validate-if-empty')){
-            UpdateFieldValidationStatus(elToTest, this.rules, this.settings, true, false, false); 
+            UpdateFieldValidationStatus(elToTest, this.rules, this.settings, true, false, false,validateImmediately); 
         } else {
             elToTest.setAttribute('data-message',this.rules.empty.message );
-            UpdateFieldValidationStatus(elToTest, this.rules, this.settings, true, false, false);  
+            UpdateFieldValidationStatus(elToTest, this.rules, this.settings, true, false, false,validateImmediately);  
         }     
     }
-    private success = ():void => {
+    private success = (validateImmediately?: boolean):void => {
         var that = this;
         let elToTest = this.altElement || this.element;
         if(this.lblField){
             addErrorMessage(this.lblField,"");
         }
         elToTest.removeAttribute('data-message');
-        UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, true, false);
+        UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, true, false, validateImmediately);
         let inputs = this.container.querySelectorAll('input');
         if(inputs.length > 1){
             for(let i = 0; i < inputs.length; ++i){
@@ -474,13 +503,13 @@ class Validator {
         this.element.addEventListener('blur',function(){that.clear()});
         this.element.addEventListener('focusout',function(){that.clear()});
     }
-    private fail = ():void => {
+    private fail = (validateImmediately?: boolean):void => {
         let elToTest = this.altElement || this.element;
         if(this.lblField){
             addErrorMessage(this.lblField,this.failedMsg);
         }
         elToTest.setAttribute('data-message',this.rules.failed.message);
-        UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, false, true); 
+        UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, false, true,validateImmediately); 
     }
     private clear = ():void => {
         this.container.classList.remove(this.rules.success.class);
@@ -513,33 +542,34 @@ class CheckBoxValidator {
             elements[d].addEventListener('change',function(){that._checkIfAnySelected();});
             elements[d].addEventListener('click',function(){that._checkIfAnySelected();});
         }
+        this._checkIfAnySelected(false);
     }
-    private _checkIfAnySelected = (): void => {
+    private _checkIfAnySelected = (validateImmediately?: boolean): void => {
         let selected = false;
         let checkedItems = this._container.querySelectorAll("[type=checkbox]");
         for(let c = 0;c<checkedItems.length;++c){
             if(checkedItems[c].checked){
                 selected = true;
-                this.success();
+                this.success(validateImmediately);
                 return;
             }
         }
         this.fail();
 
     }
-    private empty = ():void => {
+    private empty = (validateImmediately?: boolean):void => {
         this._container.parentNode.classList.remove(this._rules.checking.class);
         this._container.parentNode.classList.remove(this._rules.success.class);
         this._container.parentNode.classList.remove(this._rules.failed.class);
-        this._container.parentNode.classList.add(this._rules.empty.class);
+        if(validateImmediately) this._container.parentNode.classList.add(this._rules.empty.class);
         this._container.classList.remove('validated');
         
     }
-    private success = ():void => {
+    private success = (validateImmediately?: boolean):void => {
         this._container.parentNode.classList.remove(this._rules.empty.class);
         this._container.parentNode.classList.remove(this._rules.checking.class);
         this._container.parentNode.classList.remove(this._rules.failed.class);
-        this._container.parentNode.classList.add(this._rules.success.class);
+        if(validateImmediately) this._container.parentNode.classList.add(this._rules.success.class);
         let checkedItems = this._container.querySelectorAll("[type=checkbox]");
         for(let c = 0;c<checkedItems.length;++c){
             checkedItems[c].classList.add('validated');
@@ -550,8 +580,8 @@ class CheckBoxValidator {
         //this._container.addEventListener('blur',function(){that.clear()});
 
     }
-    private fail = ():void => {
-        this._container.parentNode.classList.add(this._rules.empty.class);
+    private fail = (validateImmediately?: boolean):void => {
+        if(validateImmediately) this._container.parentNode.classList.add(this._rules.empty.class);
         this._container.parentNode.classList.remove(this._rules.checking.class);
         this._container.parentNode.classList.remove(this._rules.success.class);
         let checkedItems = this._container.querySelectorAll("[type=checkbox]");
@@ -601,33 +631,34 @@ class RadioButtonValidator {
             elements[d].addEventListener('change',function(){that._checkIfAnySelected();})
             elements[d].addEventListener('click',function(){that._checkIfAnySelected();})
         }
+        this._checkIfAnySelected(false);
     }
-    private _checkIfAnySelected = (): void => {
+    private _checkIfAnySelected = (validateImmediately?: boolean): void => {
         let selected = false;
         let checkedItems = this._container.querySelectorAll("[type=radio]");
         for(let c = 0;c<checkedItems.length;++c){
             if(checkedItems[c].checked){
                 selected = true;
-                this.success();
+                this.success(validateImmediately);
                 return;
             }
         }
         this.fail();
 
     }
-    private empty = ():void => {
+    private empty = (validateImmediately?: boolean):void => {
         this._container.parentNode.classList.remove(this._rules.checking.class);
         this._container.parentNode.classList.remove(this._rules.success.class);
         this._container.parentNode.classList.remove(this._rules.failed.class);
-        this._container.parentNode.classList.add(this._rules.empty.class);
+        if(!validateImmediately) this._container.parentNode.classList.add(this._rules.empty.class);
         this._container.classList.remove('validated');
         
     }
-    private success = ():void => {
+    private success = (validateImmediately?: boolean):void => {
         this._container.parentNode.classList.remove(this._rules.empty.class);
         this._container.parentNode.classList.remove(this._rules.checking.class);
         this._container.parentNode.classList.remove(this._rules.failed.class);
-        this._container.parentNode.classList.add(this._rules.success.class);
+        if(!validateImmediately) this._container.parentNode.classList.add(this._rules.success.class);
         let checkedItems = this._container.querySelectorAll("[type=radio]");
         for(let c = 0;c<checkedItems.length;++c){
             checkedItems[c].classList.add('validated');
@@ -638,11 +669,11 @@ class RadioButtonValidator {
         //this._container.addEventListener('blur',function(){that.clear()});
 
     }
-    private fail = ():void => {
+    private fail = (validateImmediately?: boolean):void => {
         this._container.parentNode.classList.add(this._rules.empty.class);
         this._container.parentNode.classList.remove(this._rules.checking.class);
         this._container.parentNode.classList.remove(this._rules.success.class);
-        this._container.parentNode.classList.add(this._rules.failed.class);
+        if(!validateImmediately) this._container.parentNode.classList.add(this._rules.failed.class);
         let checkedItems = this._container.querySelectorAll("[type=radio]");
         for(let c = 0;c<checkedItems.length;++c){
             checkedItems[c].classList.remove('validated');
@@ -694,6 +725,7 @@ var checkForOneOrMultipleFields = function(el: any, type: string, rules: any){
             l[x].parentNode.classList.remove(rules.failed.class);
             l[x].classList.add('do-not-validate');
             l[x].addEventListener('keyup',function(){concatinateInHiddenField(l,e)})
+            l[x].addEventListener('click',function(){concatinateInHiddenField(l,e)})
             
         }
         return e;
@@ -776,7 +808,7 @@ var checkForAllValidated = (element:any,settings: any) => {
         if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')){
         } 
         else {
-            if(jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].hasAttribute('data-always-invalid') ){
+            if(jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].hasAttribute('data-always-invalid') || b[x].classList.contains('hidden-for-multi') ){
                 v = false;
                 if(settings.disableSubmit){
                     disableSubmit(element);
@@ -809,17 +841,17 @@ var enableSubmit = (element:any):void => {
 }
 
 // Set Success, Fail and clear
-var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boolean, success: boolean, fail: boolean):void => {
+var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boolean, success: boolean, fail: boolean,validateImmediately?: boolean):void => { 
         let parentWrapper = getParentWrapperElement(el);
         parentWrapper.classList.remove(rules.checking.class);
         if (success) {
             el.classList.add('validated');
-            parentWrapper.classList.add(rules.success.class);
+            if(validateImmediately) parentWrapper.classList.add(rules.success.class);
         } else {
             parentWrapper.classList.remove(rules.success.class);
         }
         if(empty){
-            parentWrapper.classList.add(rules.empty.class);
+            if(validateImmediately) parentWrapper.classList.add(rules.empty.class);
         } else {
             parentWrapper.classList.remove(rules.empty.class);
         }

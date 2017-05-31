@@ -7,7 +7,7 @@ var Config = (function () {
     };
     return Config;
 }());
-Config.version = '0.1.7';
+Config.version = '0.3.1';
 var ValidatorConfig = (function () {
     function ValidatorConfig(r) {
         this.ValidationSettings = {
@@ -133,11 +133,11 @@ var ValidatorConfig = (function () {
         this.date = {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
-                "class": 'valid-success',
+                "class": 'success',
                 "function": ''
             },
             failed: {
-                "class": 'valid-failed',
+                "class": 'failed',
                 "function": ''
             },
             empty: {
@@ -177,6 +177,22 @@ var ValidatorConfig = (function () {
                 "function": ''
             },
             matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/
+        };
+        this.notNull = {
+            checking: { "class": 'valid-checking', "function": '' },
+            success: {
+                "class": 'valid-success',
+                "function": ''
+            },
+            failed: {
+                "class": 'valid-failed',
+                "function": ''
+            },
+            empty: {
+                "class": 'valid-empty',
+                "function": ''
+            },
+            matchPattern: /^.{1,}$/
         };
         this.checkbox = {
             checking: { "class": 'valid-checking', "function": '' },
@@ -320,6 +336,9 @@ $.fn.hpsValidate = function (options) {
         AddValidationToElement(this[0], v);
         checkForAllValidated(this[0], v.ValidationSettings);
     }
+    else if (options == 'remove') {
+        createValidationRemover(this[0]);
+    }
     else {
         if (v.ValidationSettings.disableSubmit)
             disableSubmit(this[0]);
@@ -391,6 +410,12 @@ var createValidator = function (v, element, validateNow) {
             var va = new Validator(v1, v.ValidationSettings);
             validateNow ? va.validate(element) : va.load(element);
             break;
+        // Just check to see if it is null
+        case "":
+        case "data-validate":
+        case "true":
+            var va = new Validator(v['notNull'], v.ValidationSettings);
+            validateNow ? va.validate(element) : va.load(element);
     }
 };
 var Validator = (function () {
@@ -402,63 +427,67 @@ var Validator = (function () {
             if (altElement)
                 _this.altElement = altElement;
             var elToTest = _this.altElement || _this.element;
-            _this.container = getParentWrapperElement(elToTest);
+            _this.container = getParentWrapperElement(elToTest) || _this.element.parentNode;
             elToTest.classList.add('validate-watching');
-            elToTest.addEventListener('keyup', function () { that.validate(); });
-            elToTest.addEventListener('click', function () { that.validate(); });
-            elToTest.addEventListener('change', function () { that.validate(); });
+            elToTest.addEventListener('input', function () { that.validate(true); });
+            elToTest.addEventListener('click', function () { that.validate(true); });
+            elToTest.addEventListener('change', function () { that.validate(true); });
+            elToTest.addEventListener('blur', function () { that.validate(true); });
             _this.lblField = getLabelElement(elToTest);
             _this.emptyMsg = elToTest.getAttribute('data-error-empty') || 'This field is required';
             _this.failedMsg = elToTest.getAttribute('data-error-failed') || 'Please correct this field';
-            if (_this.settings.runOnLoad)
-                _this.validate();
+            _this.settings.runOnLoad ? _this.validate(true) : _this.validate(false); // If runOnLoad is set to 'true' then the inputs will be decorated on load
             if (_this.rules.keyUp) {
                 elToTest.addEventListener('keyup', function () { that.rules.keyUp(el); });
             }
         };
-        this.validate = function (el, altElement) {
+        this.validate = function (validateImmediately, el, altElement) {
             var re = new RegExp(_this.rules.matchPattern);
             if (el)
                 _this.element = el;
             if (altElement)
                 _this.altElement = altElement;
             var elToTest = _this.altElement || _this.element;
-            _this.container.classList.add(_this.rules.checking["class"]);
+            try {
+                _this.container.classList.add(_this.rules.checking["class"]);
+            }
+            catch (e) {
+            }
             if ($(_this.container).is(':visible') || elToTest.classList.contains('validate-if-hidden')) {
                 if (elToTest.value == '' && _this.settings.validateIfEmpty) {
                     if (elToTest.tagName == 'SELECT') {
-                        _this.fail();
+                        _this.empty(validateImmediately);
                     }
                     else {
-                        _this.empty();
+                        _this.empty(validateImmediately);
                     }
                 }
                 else {
-                    elToTest.value != '' && re.test(elToTest.value) ? _this.success() : _this.fail();
+                    elToTest.value != '' && re.test(elToTest.value) ? _this.success(validateImmediately) : _this.fail(validateImmediately);
                 }
             }
         };
-        this.empty = function () {
+        this.empty = function (validateImmediately) {
             var elToTest = _this.altElement || _this.element;
             if (_this.lblField) {
                 addErrorMessage(_this.lblField, _this.emptyMsg);
             }
             if (elToTest.classList.contains('no-validate-if-empty')) {
-                UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, true, false, false);
+                UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, true, false, false, validateImmediately);
             }
             else {
                 elToTest.setAttribute('data-message', _this.rules.empty.message);
-                UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, true, false, false);
+                UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, true, false, false, validateImmediately);
             }
         };
-        this.success = function () {
+        this.success = function (validateImmediately) {
             var that = _this;
             var elToTest = _this.altElement || _this.element;
             if (_this.lblField) {
                 addErrorMessage(_this.lblField, "");
             }
             elToTest.removeAttribute('data-message');
-            UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, false, true, false);
+            UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, false, true, false, validateImmediately);
             var inputs = _this.container.querySelectorAll('input');
             if (inputs.length > 1) {
                 for (var i = 0; i < inputs.length; ++i) {
@@ -469,13 +498,13 @@ var Validator = (function () {
             _this.element.addEventListener('blur', function () { that.clear(); });
             _this.element.addEventListener('focusout', function () { that.clear(); });
         };
-        this.fail = function () {
+        this.fail = function (validateImmediately) {
             var elToTest = _this.altElement || _this.element;
             if (_this.lblField) {
                 addErrorMessage(_this.lblField, _this.failedMsg);
             }
             elToTest.setAttribute('data-message', _this.rules.failed.message);
-            UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, false, false, true);
+            UpdateFieldValidationStatus(elToTest, _this.rules, _this.settings, false, false, true, validateImmediately);
         };
         this.clear = function () {
             _this.container.classList.remove(_this.rules.success["class"]);
@@ -503,31 +532,34 @@ var CheckBoxValidator = (function () {
                 elements[d].addEventListener('change', function () { that._checkIfAnySelected(); });
                 elements[d].addEventListener('click', function () { that._checkIfAnySelected(); });
             }
+            _this._checkIfAnySelected(false);
         };
-        this._checkIfAnySelected = function () {
+        this._checkIfAnySelected = function (validateImmediately) {
             var selected = false;
             var checkedItems = _this._container.querySelectorAll("[type=checkbox]");
             for (var c = 0; c < checkedItems.length; ++c) {
                 if (checkedItems[c].checked) {
                     selected = true;
-                    _this.success();
+                    _this.success(validateImmediately);
                     return;
                 }
             }
             _this.fail();
         };
-        this.empty = function () {
+        this.empty = function (validateImmediately) {
             _this._container.parentNode.classList.remove(_this._rules.checking["class"]);
             _this._container.parentNode.classList.remove(_this._rules.success["class"]);
             _this._container.parentNode.classList.remove(_this._rules.failed["class"]);
-            _this._container.parentNode.classList.add(_this._rules.empty["class"]);
+            if (validateImmediately)
+                _this._container.parentNode.classList.add(_this._rules.empty["class"]);
             _this._container.classList.remove('validated');
         };
-        this.success = function () {
+        this.success = function (validateImmediately) {
             _this._container.parentNode.classList.remove(_this._rules.empty["class"]);
             _this._container.parentNode.classList.remove(_this._rules.checking["class"]);
             _this._container.parentNode.classList.remove(_this._rules.failed["class"]);
-            _this._container.parentNode.classList.add(_this._rules.success["class"]);
+            if (validateImmediately)
+                _this._container.parentNode.classList.add(_this._rules.success["class"]);
             var checkedItems = _this._container.querySelectorAll("[type=checkbox]");
             for (var c = 0; c < checkedItems.length; ++c) {
                 checkedItems[c].classList.add('validated');
@@ -537,8 +569,9 @@ var CheckBoxValidator = (function () {
             document.addEventListener('click', _this.clear);
             //this._container.addEventListener('blur',function(){that.clear()});
         };
-        this.fail = function () {
-            _this._container.parentNode.classList.add(_this._rules.empty["class"]);
+        this.fail = function (validateImmediately) {
+            if (validateImmediately)
+                _this._container.parentNode.classList.add(_this._rules.empty["class"]);
             _this._container.parentNode.classList.remove(_this._rules.checking["class"]);
             _this._container.parentNode.classList.remove(_this._rules.success["class"]);
             var checkedItems = _this._container.querySelectorAll("[type=checkbox]");
@@ -583,31 +616,34 @@ var RadioButtonValidator = (function () {
                 elements[d].addEventListener('change', function () { that._checkIfAnySelected(); });
                 elements[d].addEventListener('click', function () { that._checkIfAnySelected(); });
             }
+            _this._checkIfAnySelected(false);
         };
-        this._checkIfAnySelected = function () {
+        this._checkIfAnySelected = function (validateImmediately) {
             var selected = false;
             var checkedItems = _this._container.querySelectorAll("[type=radio]");
             for (var c = 0; c < checkedItems.length; ++c) {
                 if (checkedItems[c].checked) {
                     selected = true;
-                    _this.success();
+                    _this.success(validateImmediately);
                     return;
                 }
             }
             _this.fail();
         };
-        this.empty = function () {
+        this.empty = function (validateImmediately) {
             _this._container.parentNode.classList.remove(_this._rules.checking["class"]);
             _this._container.parentNode.classList.remove(_this._rules.success["class"]);
             _this._container.parentNode.classList.remove(_this._rules.failed["class"]);
-            _this._container.parentNode.classList.add(_this._rules.empty["class"]);
+            if (!validateImmediately)
+                _this._container.parentNode.classList.add(_this._rules.empty["class"]);
             _this._container.classList.remove('validated');
         };
-        this.success = function () {
+        this.success = function (validateImmediately) {
             _this._container.parentNode.classList.remove(_this._rules.empty["class"]);
             _this._container.parentNode.classList.remove(_this._rules.checking["class"]);
             _this._container.parentNode.classList.remove(_this._rules.failed["class"]);
-            _this._container.parentNode.classList.add(_this._rules.success["class"]);
+            if (!validateImmediately)
+                _this._container.parentNode.classList.add(_this._rules.success["class"]);
             var checkedItems = _this._container.querySelectorAll("[type=radio]");
             for (var c = 0; c < checkedItems.length; ++c) {
                 checkedItems[c].classList.add('validated');
@@ -617,11 +653,12 @@ var RadioButtonValidator = (function () {
             document.addEventListener('click', _this.clear);
             //this._container.addEventListener('blur',function(){that.clear()});
         };
-        this.fail = function () {
+        this.fail = function (validateImmediately) {
             _this._container.parentNode.classList.add(_this._rules.empty["class"]);
             _this._container.parentNode.classList.remove(_this._rules.checking["class"]);
             _this._container.parentNode.classList.remove(_this._rules.success["class"]);
-            _this._container.parentNode.classList.add(_this._rules.failed["class"]);
+            if (!validateImmediately)
+                _this._container.parentNode.classList.add(_this._rules.failed["class"]);
             var checkedItems = _this._container.querySelectorAll("[type=radio]");
             for (var c = 0; c < checkedItems.length; ++c) {
                 checkedItems[c].classList.remove('validated');
@@ -675,6 +712,7 @@ var checkForOneOrMultipleFields = function (el, type, rules) {
             l[x].parentNode.classList.remove(rules.failed["class"]);
             l[x].classList.add('do-not-validate');
             l[x].addEventListener('keyup', function () { concatinateInHiddenField(l, e_1); });
+            l[x].addEventListener('click', function () { concatinateInHiddenField(l, e_1); });
         }
         return e_1;
     }
@@ -753,7 +791,7 @@ var checkForAllValidated = function (element, settings) {
         if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')) {
         }
         else {
-            if (jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].hasAttribute('data-always-invalid')) {
+            if (jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].hasAttribute('data-always-invalid') || b[x].classList.contains('hidden-for-multi')) {
                 v = false;
                 if (settings.disableSubmit) {
                     disableSubmit(element);
@@ -786,18 +824,20 @@ var enableSubmit = function (element) {
     }
 };
 // Set Success, Fail and clear
-var UpdateFieldValidationStatus = function (el, rules, settings, empty, success, fail) {
+var UpdateFieldValidationStatus = function (el, rules, settings, empty, success, fail, validateImmediately) {
     var parentWrapper = getParentWrapperElement(el);
     parentWrapper.classList.remove(rules.checking["class"]);
     if (success) {
         el.classList.add('validated');
-        parentWrapper.classList.add(rules.success["class"]);
+        if (validateImmediately)
+            parentWrapper.classList.add(rules.success["class"]);
     }
     else {
         parentWrapper.classList.remove(rules.success["class"]);
     }
     if (empty) {
-        parentWrapper.classList.add(rules.empty["class"]);
+        if (validateImmediately)
+            parentWrapper.classList.add(rules.empty["class"]);
     }
     else {
         parentWrapper.classList.remove(rules.empty["class"]);
