@@ -185,6 +185,14 @@ $('form').hpsValidate('update');
 **Bug Fixes:**
     Form will now properly validate fields that are populated on load.  Please set 'runOnLoad' to 'true'.
 
+### 0.3.3
+**Additions**
+    Added taxId
 
+### 0.3.4
+
+### 0.3.5
+**Bug Fixes:**
+    Fixed bug on form postback.  No longer need to click in a multi field to enable submit.
 
 ## See samples in [index](../index.html)

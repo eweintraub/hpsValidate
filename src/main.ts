@@ -1,7 +1,7 @@
 /// <reference path="index.d.ts" />
 
 class Config {
-    public static version: string = '0.3.1';
+    public static version: string = '0.3.5';
     public static ver(): void {
         console.log(this.version);
     }
@@ -14,6 +14,7 @@ class ValidatorConfig {
         runOnLoad: true,
         validateIfHidden: false,
         disableSubmit: true,
+        validateOnLoadIfPopulated: true,
         validateIfEmpty: true
     }
     constructor(r: any) {
@@ -42,9 +43,14 @@ class ValidatorConfig {
         else if(r.validateIfEmpty === 'false'){
             this.ValidationSettings.validateIfEmpty = false
         }
-        if(r.validateIfEmpty === 'true'){
-            this.ValidationSettings.validateIfEmpty = true
+
+        if(r.validateOnLoadIfPopulated === 'true'){
+            this.ValidationSettings.validateOnLoadIfPopulated = true
         } 
+        else if(r.validateOnLoadIfPopulated === 'false'){
+            this.ValidationSettings.validateOnLoadIfPopulated = false
+        }
+       
         this.ValidationSettings.identifier = r.identifier || '[data-validate]';
 
         // GET and set the checkbox settings
@@ -229,7 +235,23 @@ class ValidatorConfig {
             function: ''
         },
         matchPattern: /^([A-Z]{2})$/
-    }
+    };
+    public taxId = {
+            checking: { "class": 'valid-checking', "function": '' },
+            success: {
+                "class": 'valid-success',
+                "function": ''
+            },
+            failed: {
+                "class": 'valid-failed',
+                "function": ''
+            },
+            empty: {
+                "class": 'valid-empty',
+                "function": ''
+            },
+            matchPattern: /^[0-9]{2}\-[0-9]{7}$/
+        };
     public properName = {
         checking: { "class": 'valid-checking', "function": '' },
         success: {
@@ -244,7 +266,7 @@ class ValidatorConfig {
             "class": 'valid-empty',
             "function": ''
         },
-        matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/
+        matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z\,]+)*$/
     };
     public notNull = {
         checking: { "class": 'valid-checking', "function": '' },
@@ -337,7 +359,7 @@ $.fn.hpsValidate = function( options?:any ){
                 AddValidationToElement(this[0],v);
                 checkForAllValidated(this[0],v.ValidationSettings);
             } else if (options == 'remove'){
-                createValidationRemover(this[0]);
+                //createValidationRemover(this[0]);
             } else {
                 if(v.ValidationSettings.disableSubmit) disableSubmit(this[0]);
                 AddValidationToElement(this[0],v);
@@ -376,11 +398,13 @@ var AddValidationToElement = function(target:any, v: any){
                 createValidator(v,elements[0]);
                 elements = target.querySelectorAll(identifier);
             }
+            handlePageLoad();
 };
 
 var createValidator = function(v:any,element:any,validateNow?:boolean){
     let t = element.getAttribute('data-validate');
     switch (t) {
+        
         case 'text':
         case 'mixedText':
         case 'number':
@@ -388,16 +412,17 @@ var createValidator = function(v:any,element:any,validateNow?:boolean){
         case 'stateAbbr':
         case 'properName':
         case 'email':
+        case 'taxId':
         case 'dropdown':
             var va = new Validator(v[t], v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element);
+            validateNow ? va.validate(true, element) : va.load(element);
             break;
         case 'ssn':
         case 'phone':
         case 'date':
             var f = checkForOneOrMultipleFields(element, element.getAttribute('data-validate'), v[t]);
             var va = new Validator(v[t], v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element, f); 
+            validateNow ? va.validate(true, element) : va.load(element, f); 
             break;
         case 'checkbox':
             new CheckBoxValidator(element, v[t], v.ValidationSettings);
@@ -410,14 +435,14 @@ var createValidator = function(v:any,element:any,validateNow?:boolean){
             let v1 = v[t];
             v1.matchPattern = pattern;
             var va = new Validator(v1, v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element);
+            validateNow ? va.validate(true, element) : va.load(element);
             break;
         // Just check to see if it is null
         case "":
         case "data-validate":
         case "true":
             var va = new Validator(v['notNull'], v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element);
+            validateNow ? va.validate(true, element) : va.load(element);
     }
 };
 class Validator {
@@ -617,7 +642,6 @@ class RadioButtonValidator {
         this._element = element;
         this._container = getParentWrapperElement(element);
         this.ConfigureSubmitButton();
-
     }
     private ConfigureSubmitButton = (): void => {
         if(this._settings.disableSubmit) disableSubmit(this._element);
@@ -679,7 +703,8 @@ class RadioButtonValidator {
             checkedItems[c].classList.remove('validated');
         }
         this._container.classList.remove('validated');
-        checkForAllValidated(this._element, this._settings);
+        //checkForAllValidated(this._element, this._settings);
+        disableSubmit(this._element);
     }
     private clear = ():void => {
         let a = event.target;
@@ -772,19 +797,21 @@ var getParentForm = function(element: any): any{
 var getLabelElement = function(element: any): any{
     let prev;
     let el = element;
-    let parent = getParentWrapperElement(element);
-    while(parent && parent != null){
-        prev = parent.previousElementSibling;
-        if(prev){
-            if(prev.tagName === 'BODY'){
-                console.error('No label found for ',element);
-                return null;
+    if(el){
+        let parent = getParentWrapperElement(element);
+        while(parent && parent != null){
+            prev = parent.previousElementSibling;
+            if(prev){
+                if(prev.tagName === 'BODY'){
+                    console.error('No label found for ',element);
+                    return null;
+                }
+                if(prev.hasAttribute('data-label')){
+                    return prev;
+                }
             }
-            if(prev.hasAttribute('data-label')){
-                return prev;
-            }
+            parent = prev;
         }
-        parent = prev;
     }
 }
 // create value to be validated
@@ -798,6 +825,19 @@ var concatinateInHiddenField = function(fields: any, el: any){
     
 
 };
+
+var handlePageLoad = function(){
+    // this function will touch each element.
+    $('.validate-watching, .do-not-validate').each(function () {
+        if (!$(this).hasClass('validate-if-hidden')) {
+
+            if ($(this).val() != '' || $(this).val()) {
+                $(this).click();
+                $(this).closest('.input-wrapper').removeClass('valid-success');
+            }
+        }
+    });
+}
 
 // Review all fields, if all are validated enable submit else disable
 var checkForAllValidated = (element:any,settings: any) => {
@@ -827,7 +867,7 @@ var checkForAllValidated = (element:any,settings: any) => {
 var disableSubmit = (element?:any):void => {
     let thisForm = document;
     if(element){thisForm = getParentForm(element);}
-    var b = thisForm.querySelectorAll('[type=submit]');
+    var b = thisForm.querySelectorAll('[type=submit], .submit');
     for(var x = 0; x < b.length; ++x){
         if(jQuery(b[x]).is(":visible")){
             b[x].setAttribute('disabled','disabled');
@@ -835,8 +875,9 @@ var disableSubmit = (element?:any):void => {
     }
 }
 var enableSubmit = (element:any):void => {
-    let thisForm = getParentForm(element);
-    var b = thisForm.querySelectorAll('[type=submit]');
+    let thisForm = document;
+    if(element){thisForm = getParentForm(element);}
+    var b = thisForm.querySelectorAll('[type=submit], .submit');
     for(var x = 0; x < b.length; ++x){
         if(jQuery(b[x]).is(":visible")){
             b[x].removeAttribute('disabled');
@@ -879,23 +920,6 @@ var addErrorMessage = function(element: any, message: string):void {
     }
 }
 
-var empty = ():void => {
-
-}
-
-var success = ():void => {
-    
-}
-
-var fail = ():void => {
-    
-}
-
-(function () {
-
-
-
-})();
 
 
 

@@ -7,7 +7,7 @@ var Config = (function () {
     };
     return Config;
 }());
-Config.version = '0.3.1';
+Config.version = '0.3.5';
 var ValidatorConfig = (function () {
     function ValidatorConfig(r) {
         this.ValidationSettings = {
@@ -15,6 +15,7 @@ var ValidatorConfig = (function () {
             runOnLoad: true,
             validateIfHidden: false,
             disableSubmit: true,
+            validateOnLoadIfPopulated: true,
             validateIfEmpty: true
         };
         this.text = {
@@ -162,6 +163,22 @@ var ValidatorConfig = (function () {
             },
             matchPattern: /^([A-Z]{2})$/
         };
+        this.taxId = {
+            checking: { "class": 'valid-checking', "function": '' },
+            success: {
+                "class": 'valid-success',
+                "function": ''
+            },
+            failed: {
+                "class": 'valid-failed',
+                "function": ''
+            },
+            empty: {
+                "class": 'valid-empty',
+                "function": ''
+            },
+            matchPattern: /^[0-9]{2}\-[0-9]{7}$/
+        };
         this.properName = {
             checking: { "class": 'valid-checking', "function": '' },
             success: {
@@ -176,7 +193,7 @@ var ValidatorConfig = (function () {
                 "class": 'valid-empty',
                 "function": ''
             },
-            matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/
+            matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z\,]+)*$/
         };
         this.notNull = {
             checking: { "class": 'valid-checking', "function": '' },
@@ -281,8 +298,11 @@ var ValidatorConfig = (function () {
         else if (r.validateIfEmpty === 'false') {
             this.ValidationSettings.validateIfEmpty = false;
         }
-        if (r.validateIfEmpty === 'true') {
-            this.ValidationSettings.validateIfEmpty = true;
+        if (r.validateOnLoadIfPopulated === 'true') {
+            this.ValidationSettings.validateOnLoadIfPopulated = true;
+        }
+        else if (r.validateOnLoadIfPopulated === 'false') {
+            this.ValidationSettings.validateOnLoadIfPopulated = false;
         }
         this.ValidationSettings.identifier = r.identifier || '[data-validate]';
         // GET and set the checkbox settings
@@ -337,7 +357,7 @@ $.fn.hpsValidate = function (options) {
         checkForAllValidated(this[0], v.ValidationSettings);
     }
     else if (options == 'remove') {
-        createValidationRemover(this[0]);
+        //createValidationRemover(this[0]);
     }
     else {
         if (v.ValidationSettings.disableSubmit)
@@ -375,6 +395,7 @@ var AddValidationToElement = function (target, v) {
         createValidator(v, elements[0]);
         elements = target.querySelectorAll(identifier);
     }
+    handlePageLoad();
 };
 var createValidator = function (v, element, validateNow) {
     var t = element.getAttribute('data-validate');
@@ -386,16 +407,17 @@ var createValidator = function (v, element, validateNow) {
         case 'stateAbbr':
         case 'properName':
         case 'email':
+        case 'taxId':
         case 'dropdown':
             var va = new Validator(v[t], v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element);
+            validateNow ? va.validate(true, element) : va.load(element);
             break;
         case 'ssn':
         case 'phone':
         case 'date':
             var f = checkForOneOrMultipleFields(element, element.getAttribute('data-validate'), v[t]);
             var va = new Validator(v[t], v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element, f);
+            validateNow ? va.validate(true, element) : va.load(element, f);
             break;
         case 'checkbox':
             new CheckBoxValidator(element, v[t], v.ValidationSettings);
@@ -408,14 +430,14 @@ var createValidator = function (v, element, validateNow) {
             var v1 = v[t];
             v1.matchPattern = pattern;
             var va = new Validator(v1, v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element);
+            validateNow ? va.validate(true, element) : va.load(element);
             break;
         // Just check to see if it is null
         case "":
         case "data-validate":
         case "true":
             var va = new Validator(v['notNull'], v.ValidationSettings);
-            validateNow ? va.validate(element) : va.load(element);
+            validateNow ? va.validate(true, element) : va.load(element);
     }
 };
 var Validator = (function () {
@@ -664,7 +686,8 @@ var RadioButtonValidator = (function () {
                 checkedItems[c].classList.remove('validated');
             }
             _this._container.classList.remove('validated');
-            checkForAllValidated(_this._element, _this._settings);
+            //checkForAllValidated(this._element, this._settings);
+            disableSubmit(_this._element);
         };
         this.clear = function () {
             var a = event.target;
@@ -758,19 +781,21 @@ var getParentForm = function (element) {
 var getLabelElement = function (element) {
     var prev;
     var el = element;
-    var parent = getParentWrapperElement(element);
-    while (parent && parent != null) {
-        prev = parent.previousElementSibling;
-        if (prev) {
-            if (prev.tagName === 'BODY') {
-                console.error('No label found for ', element);
-                return null;
+    if (el) {
+        var parent_1 = getParentWrapperElement(element);
+        while (parent_1 && parent_1 != null) {
+            prev = parent_1.previousElementSibling;
+            if (prev) {
+                if (prev.tagName === 'BODY') {
+                    console.error('No label found for ', element);
+                    return null;
+                }
+                if (prev.hasAttribute('data-label')) {
+                    return prev;
+                }
             }
-            if (prev.hasAttribute('data-label')) {
-                return prev;
-            }
+            parent_1 = prev;
         }
-        parent = prev;
     }
 };
 // create value to be validated
@@ -781,6 +806,17 @@ var concatinateInHiddenField = function (fields, el) {
     }
     el.value = v;
     el.click();
+};
+var handlePageLoad = function () {
+    // this function will touch each element.
+    $('.validate-watching, .do-not-validate').each(function () {
+        if (!$(this).hasClass('validate-if-hidden')) {
+            if ($(this).val() != '' || $(this).val()) {
+                $(this).click();
+                $(this).closest('.input-wrapper').removeClass('valid-success');
+            }
+        }
+    });
 };
 // Review all fields, if all are validated enable submit else disable
 var checkForAllValidated = function (element, settings) {
@@ -811,7 +847,7 @@ var disableSubmit = function (element) {
     if (element) {
         thisForm = getParentForm(element);
     }
-    var b = thisForm.querySelectorAll('[type=submit]');
+    var b = thisForm.querySelectorAll('[type=submit], .submit');
     for (var x = 0; x < b.length; ++x) {
         if (jQuery(b[x]).is(":visible")) {
             b[x].setAttribute('disabled', 'disabled');
@@ -819,8 +855,11 @@ var disableSubmit = function (element) {
     }
 };
 var enableSubmit = function (element) {
-    var thisForm = getParentForm(element);
-    var b = thisForm.querySelectorAll('[type=submit]');
+    var thisForm = document;
+    if (element) {
+        thisForm = getParentForm(element);
+    }
+    var b = thisForm.querySelectorAll('[type=submit], .submit');
     for (var x = 0; x < b.length; ++x) {
         if (jQuery(b[x]).is(":visible")) {
             b[x].removeAttribute('disabled');
@@ -866,11 +905,3 @@ var addErrorMessage = function (element, message) {
         });
     }
 };
-var empty = function () {
-};
-var success = function () {
-};
-var fail = function () {
-};
-(function () {
-})();

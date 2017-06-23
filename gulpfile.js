@@ -9,7 +9,7 @@ var jsFiles = 'src/*.js',
 
 gulp.task('scripts', function() {  
     return gulp.src(jsFiles)
-        .pipe(concat('hps.Validate.js'))
+        .pipe(concat('main.js'))
         .pipe(gulp.dest(jsDest))
         .pipe(rename('hps.validate.min.js'))
         .pipe(uglify())

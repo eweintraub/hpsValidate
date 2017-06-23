@@ -133,12 +133,19 @@
             <form id="bottomForm">
                     <div class="form-group">
                         <label data-label>Anything you want</label>
-                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Text" data-validate></div>
-                        
+                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Text" data-validate value="blah"></div>
                     </div>
                     <div class="form-group">
-                        <label for="GenericText" data-label>Text Only</label>
-                        <div class="input-wrapper row"><input class="form-control no-validate-if-empty" id="text" placeholder="Enter State" data-validate="stateAbbr" value="NY"></div>
+                        <label for="ssn" data-label>Phone Number (Multiple Fields)</label>
+                        <div class="input-wrapper row">
+                            <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%" value="999">
+                            <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%" value="999">
+                            <input size="4" maxLength="4" class="form-control" data-validate="phone" style="width:40%" value="9989">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="GenericText" data-label>Tax ID</label>
+                        <div class="input-wrapper row"><input class="form-control no-validate-if-empty" id="text" placeholder="Enter State" data-validate="taxId" value="11-1234567"></div>
                         
                     </div>
                     <div class="form-group" style="display:none">
@@ -158,9 +165,10 @@
                     </div>
                     <div class="form-group">
                         <label for="ssn" data-label>Social Security Number (Single Field)</label>
-                        <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn" value="333333333"></div>
+                        <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn" value="111111111"></div>
                     </div>
                 <button type="submit" class="btn btn-primary proceed">Submit</button>
+                <button type="button" class="btn btn-primary submit">Submit Button</button>
             </form>
             </div>
         </div>
@@ -172,7 +180,14 @@
     <script src="src/main.js"></script>
     <script type="text/javascript">
     $('#pageForm').hpsValidate({
-        runOnLoad:'false'
+        disableSubmit: 'true',
+        runOnLoad: 'false'
+    });
+    $('.validate-watching, .do-not-validate').each(function(){
+        if($(this).val() != '' || $(this).val()){
+            $(this).click();
+            $(this).closest('.input-wrapper').removeClass('valid-success');
+        }
     });
     </script>
 </body>
