@@ -1,7 +1,8 @@
 /// <reference path="index.d.ts" />
 
+
 class Config {
-    public static version: string = '0.3.5';
+    public static version: string = '0.3.8';
     public static ver(): void {
         console.log(this.version);
     }
@@ -266,7 +267,7 @@ class ValidatorConfig {
             "class": 'valid-empty',
             "function": ''
         },
-        matchPattern: /^[a-zA-Z]+(?:[\s-][a-zA-Z\,]+)*$/
+        matchPattern: /^[a-zA-Z\s?]+(?:[-\,?\'?\-?][\s?a-zA-Z]+)*$/
     };
     public notNull = {
         checking: { "class": 'valid-checking', "function": '' },
@@ -282,7 +283,7 @@ class ValidatorConfig {
             "class": 'valid-empty',
             "function": ''
         },
-        matchPattern: /^.{1,}$/
+        matchPattern: /.+/
     };
     public checkbox = {
         checking: {class: 'valid-checking',function: ''},
@@ -334,11 +335,11 @@ class ValidatorConfig {
     public custom = {
         checking: {class: 'valid-checking',function: ''},
         success: {
-            class: 'valid-success',
+            class: 'success',
             function: ''
         },
         failed: {
-            class: 'valid-failed',
+            class: 'failed',
             function: ''
         },
         empty: {
@@ -384,21 +385,24 @@ var ValidateElement = function(target:any ,v: any){
 
 var AddValidationToElement = function(target:any, v: any){
     let identifier:string = v.ValidationSettings.identifier + ':not(.do-not-validate):not(.validate-watching)';
-    let elements = target.querySelectorAll(identifier);
-            while(elements.length > 0){
-                if (v.ValidationSettings.validateIfHidden == false && $(elements[0]).is(':hidden')) {
-                    if(elements[0].classList.contains('hidden-for-multi') || (elements[0].classList.contains('validate-if-hidden'))){
+    if(target){
+        let elements = target.querySelectorAll(identifier);
+        while(elements.length > 0){
+            if (v.ValidationSettings.validateIfHidden == false && $(elements[0]).is(':hidden')) {
+                if(elements[0].classList.contains('hidden-for-multi') || (elements[0].classList.contains('validate-if-hidden'))){
 
-                    }
-                    else {
-                        //elements[0].removeAttribute('data-validate');
-                        elements = target.querySelectorAll(identifier);
-                    } 
                 }
-                createValidator(v,elements[0]);
-                elements = target.querySelectorAll(identifier);
+                else {
+                    //elements[0].removeAttribute('data-validate');
+                    elements = target.querySelectorAll(identifier);
+                } 
             }
-            handlePageLoad();
+            createValidator(v,elements[0]);
+            elements = target.querySelectorAll(identifier);
+        }
+        handlePageLoad();
+    }
+    
 };
 
 var createValidator = function(v:any,element:any,validateNow?:boolean){
@@ -482,20 +486,50 @@ class Validator {
         if(el) this.element = el;
         if(altElement) this.altElement = altElement;
         let elToTest = this.altElement || this.element;
+        try {
+            elToTest.value = trimValue(elToTest);
+        }
+        catch (e){
+            console.log(e);
+        }
         try{
             this.container.classList.add(this.rules.checking.class);
         }
         catch(e){
-            
+           console.log(e); 
         }
         if($(this.container).is(':visible') || elToTest.classList.contains('validate-if-hidden')){
-            if(elToTest.value == '' && this.settings.validateIfEmpty){
-                if(elToTest.tagName == 'SELECT') {this.empty(validateImmediately);}
-                else {this.empty(validateImmediately);}
+            if(elToTest.hasAttribute('data-validate-optional')){ // check to see if element is optional
+                if(elToTest.value == '' && this.settings.validateIfEmpty){
+                    if(elToTest.tagName == 'SELECT') {
+                        if(!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
+                            this.success(validateImmediately);
+                        } else {
+                            this.success(validateImmediately);
+                        }
+                    }
+                    else {this.success(validateImmediately);}
+                }
+                else {
+                    elToTest.value != '' && re.test(elToTest.value) ? this.success(validateImmediately) : this.fail(validateImmediately);
+                }
             }
-            else{
-                elToTest.value != '' && re.test(elToTest.value) ? this.success(validateImmediately) : this.fail(validateImmediately);
+            else {
+                if(elToTest.value == '' && this.settings.validateIfEmpty){
+                    if(elToTest.tagName == 'SELECT') {
+                        if(!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
+                            this.empty(validateImmediately);
+                        } else {
+                            this.success(validateImmediately);
+                        }
+                    }
+                    else {this.empty(validateImmediately);}
+                }
+                else{
+                    elToTest.value != '' && re.test(elToTest.value) ? this.success(validateImmediately) : this.fail(validateImmediately);
+                }
             }
+            
         } 
     }
     private empty = (validateImmediately?: boolean):void => {
@@ -518,11 +552,13 @@ class Validator {
         }
         elToTest.removeAttribute('data-message');
         UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, true, false, validateImmediately);
-        let inputs = this.container.querySelectorAll('input');
-        if(inputs.length > 1){
-            for(let i = 0; i < inputs.length; ++i){
-                inputs[i].addEventListener('blur',function(){that.clear()});
-                inputs[i].addEventListener('focusout',function(){that.clear()});
+        if(this.container){
+            let inputs = this.container.querySelectorAll('input');
+            if(inputs.length > 1){
+                for(let i = 0; i < inputs.length; ++i){
+                    inputs[i].addEventListener('blur',function(){that.clear()});
+                    inputs[i].addEventListener('focusout',function(){that.clear()});
+                }
             }
         }
         this.element.addEventListener('blur',function(){that.clear()});
@@ -537,8 +573,10 @@ class Validator {
         UpdateFieldValidationStatus(elToTest, this.rules, this.settings, false, false, true,validateImmediately); 
     }
     private clear = ():void => {
-        this.container.classList.remove(this.rules.success.class);
-        if(this.altElement) this.container.classList.remove(this.rules.success.class);
+        if(this.container){
+            this.container.classList.remove(this.rules.success.class);
+            if(this.altElement) this.container.classList.remove(this.rules.success.class);
+        }
     }
 }
 
@@ -727,6 +765,15 @@ var addToolTip = function(element: any){
 
 };
 
+var trimValue = function(el: any):string{
+    let max = el.getAttribute('data-max-length');
+    if(max){
+        return el.value.trim().substr(0,max);
+    } else {
+        return el.value;
+    }
+}
+
 //This will chekc to see if fields are using one field or multiple (ie. SSN or phone number)
 var checkForOneOrMultipleFields = function(el: any, type: string, rules: any){
     if(el.classList.contains('do-not-validate')) {
@@ -738,6 +785,7 @@ var checkForOneOrMultipleFields = function(el: any, type: string, rules: any){
     let count = parentWrapper.querySelectorAll('[data-validate]').length;
     if(count > 1){
         let e = document.createElement('input');
+        if(el.hasAttribute('data-validate-optional')){ e.setAttribute('data-validate-optional', 'true' ); } 
         e.setAttribute('data-validate',type);
         e.style.display = 'none';
         e.classList.add('hidden-for-multi');
@@ -776,20 +824,24 @@ var getParentWrapperElement = function(el: any): any{
     if(el.classList.contains('input-wrapper')) return el;
     while(el){
         parent = el.parentNode;
-        if(el.classList.contains('input-wrapper')) return el;
-        el = parent;
+        if(el.classList){
+            if(el.classList.contains('input-wrapper')) return el;
+            el = parent;
+        }
     }
 }
 //Find parent Form
 var getParentForm = function(element: any): any{
     let parent;
     let el = element;
-    if(el.tagName === 'FORM') return el;
-    while(el){
-        parent = el.parentNode;
+    if(el){
         if(el.tagName === 'FORM') return el;
-        if(el.tagName === 'BODY') return element;
-        el = parent;
+        while(el){
+            parent = el.parentNode;
+            if(el.tagName === 'FORM') return el;
+            if(el.tagName === 'BODY') return element;
+            el = parent;
+        }
     }
 }
 
@@ -840,30 +892,43 @@ var handlePageLoad = function(){
 }
 
 // Review all fields, if all are validated enable submit else disable
-var checkForAllValidated = (element:any,settings: any) => {
+var checkForAllValidated = (element:any,settings: any, saveFailed?:boolean) => {
     let thisForm = getParentForm(element);
-    var b = thisForm.querySelectorAll(settings.identifier);
-    var v = true;
-    for(var x = 0; x < b.length; ++x){
-        if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')){
-            if(b[x].hasAttribute('data-always-invalid')){
-                v = false;
-                return;
-            }
-        } 
-        else {
-            if(jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].classList.contains('hidden-for-multi') ){
-                v = false;
-                if(settings.disableSubmit){
-                    disableSubmit(element);
+    if(thisForm){
+        var b = thisForm.querySelectorAll(settings.identifier);
+        var v = true;
+        for(var x = 0; x < b.length; ++x){
+            if (b[x].classList.contains('validated') || b[x].classList.contains('do-not-validate')){
+                if(b[x].hasAttribute('data-always-invalid')){
+                    v = false;
+                    window['failedElement'] = b[x];
+                    
+                    if(settings.disableSubmit){
+                        disableSubmit(element);
+                    }
+                    return;
                 }
-                return;
+            } 
+            else {
+                if(jQuery(b[x]).is(':visible') || settings.validateIfHidden || b[x].classList.contains('validate-if-hidden') || b[x].classList.contains('hidden-for-multi') ){
+                    v = false;
+                    window['failedElement'] = b[x];
+                    if(settings.disableSubmit){
+                        disableSubmit(element);
+                    }
+                    return;
+                }
+                
             }
-            
         }
+        enableSubmit(element);
     }
-    enableSubmit(element);
 }
+
+// Utility function to show fields that are failing
+var getFailedElement = () => console.log(window['failedElement']);
+
+
 var disableSubmit = (element?:any):void => {
     let thisForm = document;
     if(element){thisForm = getParentForm(element);}

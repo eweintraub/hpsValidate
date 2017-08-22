@@ -49,11 +49,15 @@ The input(s) should be inside an element with the class "input-wrapper".  If the
 
 >data-validate: identifies field(s) that should be validated
 
+>data-optional: identifies field as optional.  The field will only be validated if it is not empty
+
 >data-pattern: if data-validate is set to custom then this field identifies the pattern to match
 
 >data-error-empty: identifies the text displayed if field is empty
 
 >data-error-failed: identifies the text displayed if field fails validation
+
+>data-validate-optional: This determines if the field is always validated or only when populated.  A use case for this is middle name, if someone doesn't have a middle name that's fine but if you do it's probably not "12345".  Using this option will apply only to element with the class.  To apply globally use the *validateIfEmpty* option.
 
 >data-always-invalid: Use this attribute on an input if you do not want the form to validate and enable the submit button.  You will need to enable the button manually as the field will show success but the checkForAllValidated() function will always return false.
 
@@ -103,7 +107,7 @@ $(document).hpsValidate({
 ## Other Classes
 ***
 
->**.no-validate-if-empty** : **NOT CURRENTLY IMPLEMENTED** This determines if the field is always validated or only when populated.  A use case for this is middle name, if someone doesn't have a middle name that's fine but if you do it's probably not "12345".  Using this option will apply only to element with the class.  To apply globally use the *validateIfEmpty* option.
+
 
 ## Classes That Are Applied By The Library
 ***
@@ -178,7 +182,7 @@ $('form').hpsValidate('update');
 **Bug Fixes:**
     Fixed bug that prevented success class from being removed on blur for multi-input fields.
 
-**Additions**
+**Additions:**
     Added properName validate type
 
 ### 0.2.1
@@ -186,7 +190,7 @@ $('form').hpsValidate('update');
     Form will now properly validate fields that are populated on load.  Please set 'runOnLoad' to 'true'.
 
 ### 0.3.3
-**Additions**
+**Additions:**
     Added taxId
 
 ### 0.3.4
@@ -195,4 +199,17 @@ $('form').hpsValidate('update');
 **Bug Fixes:**
     Fixed bug on form postback.  No longer need to click in a multi field to enable submit.
 
+### 0.3.6
+**Additions:**
+    Updated Proper Name pattern to /^[a-zA-Z\s?]+(?:[-\,?\'?\-?][\s?a-zA-Z]+)*$/ to allow apostrophes, dashes and commas
+    Now trimming input values to remove leading and training spaces
+
+### 0.3.7
+**Bug Fixes**
+    Added a check to SELECT inputs to see if selectedOption > 0
+
+### 0.3.8
+**Additions:**
+    Added 'data-validate-optional' attribute.  See above for description
+    Added getFailedElement() function to determine what element is failing validation.  This can be run in the console and will echo the element that failed.
 ## See samples in [index](../index.html)

@@ -21,9 +21,8 @@
     <div class="row" id="pageForm">
         <div class="col-md-8 offset-md-2">
             <form id="topForm">
-                <div id="top">
-
-                    <!--<div class="form-group">
+                <!--<div id="top">
+                    <div class="form-group">
                         <label data-label>Text</label>
                         <div class="input-wrapper row">
                             <input 
@@ -115,35 +114,35 @@
                         <div class="input-wrapper row date-row date-picker-container">
                             <input type="text" class="form-control datepicker" data-validate="date">
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group">
                         <label for="exampleSelect2" data-label>Select</label>
                         <div class="input-wrapper">
-                            <select class="form-control" data-validate="dropdown">
-                            <option></option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
+                            <select class="form-control" data-validate="dropdown" data-validate-optional>
+                                <option></option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
                             </select>
                         </div>
                     </div>
-                <button type="submit" class="btn btn-primary proceed">Submit</button>-->
+                <button type="submit" class="btn btn-primary proceed">Submit</button>
             </form>
-            <form id="bottomForm">
-                    <div class="form-group">
-                        <label data-label>Anything you want</label>
-                        <div class="input-wrapper row"><input class="form-control" placeholder="Enter Text" data-validate value="blah"></div>
-                    </div>
+           <form id="bottomForm">
+                    <!--<div class="form-group">
+                        <label data-label>NPI Number</label>
+                        <div class="input-wrapper row"><input data-max-length="10" class="form-control" placeholder="Enter Text" data-validate-optional data-validate="number" value="blah"></div>
+                    </div>-->
                     <div class="form-group">
                         <label for="ssn" data-label>Phone Number (Multiple Fields)</label>
                         <div class="input-wrapper row">
-                            <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%" value="999">
-                            <input size="3" maxLength="3" class="form-control" data-validate="phone" style="width:25%" value="999">
-                            <input size="4" maxLength="4" class="form-control" data-validate="phone" style="width:40%" value="9989">
+                            <input size="3" maxLength="3" class="form-control" data-validate="phone" data-validate-optional="true" style="width:25%" value="999">
+                            <input size="3" maxLength="3" class="form-control" data-validate="phone" data-validate-optional="true" style="width:25%" value="999">
+                            <input size="4" maxLength="4" class="form-control" data-validate="phone" data-validate-optional="true" style="width:40%" value="9989">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label for="GenericText" data-label>Tax ID</label>
                         <div class="input-wrapper row"><input class="form-control no-validate-if-empty" id="text" placeholder="Enter State" data-validate="taxId" value="11-1234567"></div>
                         
@@ -166,7 +165,7 @@
                     <div class="form-group">
                         <label for="ssn" data-label>Social Security Number (Single Field)</label>
                         <div class="input-wrapper row"><input maxLength="9" class="form-control" placeholder="Enter SSN" data-validate="ssn" value="111111111"></div>
-                    </div>
+                    </div>-->
                 <button type="submit" class="btn btn-primary proceed">Submit</button>
                 <button type="button" class="btn btn-primary submit">Submit Button</button>
             </form>
