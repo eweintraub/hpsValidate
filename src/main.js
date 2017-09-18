@@ -7,7 +7,7 @@ var Config = (function () {
     };
     return Config;
 }());
-Config.version = '0.3.8';
+Config.version = '0.3.9';
 var ValidatorConfig = (function () {
     function ValidatorConfig(r) {
         this.ValidationSettings = {
@@ -473,13 +473,17 @@ var Validator = (function () {
                 _this.altElement = altElement;
             var elToTest = _this.altElement || _this.element;
             try {
-                elToTest.value = trimValue(elToTest);
+                if (elToTest.value) {
+                    elToTest.value = trimValue(elToTest);
+                }
             }
             catch (e) {
                 console.log(e);
             }
             try {
-                _this.container.classList.add(_this.rules.checking["class"]);
+                if (_this.container) {
+                    _this.container.classList.add(_this.rules.checking["class"]);
+                }
             }
             catch (e) {
                 console.log(e);
@@ -488,11 +492,21 @@ var Validator = (function () {
                 if (elToTest.hasAttribute('data-validate-optional')) {
                     if (elToTest.value == '' && _this.settings.validateIfEmpty) {
                         if (elToTest.tagName == 'SELECT') {
-                            if (!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
-                                _this.success(validateImmediately);
+                            if (elToTest.selectedOptions) {
+                                if (!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
+                                    _this.success(validateImmediately);
+                                }
+                                else {
+                                    _this.success(validateImmediately);
+                                }
                             }
-                            else {
-                                _this.success(validateImmediately);
+                            else if (elToTest.value) {
+                                if (!elToTest.value || elToTest.value == '') {
+                                    _this.success(validateImmediately);
+                                }
+                                else {
+                                    _this.success(validateImmediately);
+                                }
                             }
                         }
                         else {
@@ -506,11 +520,21 @@ var Validator = (function () {
                 else {
                     if (elToTest.value == '' && _this.settings.validateIfEmpty) {
                         if (elToTest.tagName == 'SELECT') {
-                            if (!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
-                                _this.empty(validateImmediately);
+                            if (elToTest.selectedOptions) {
+                                if (!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
+                                    _this.empty(validateImmediately);
+                                }
+                                else {
+                                    _this.success(validateImmediately);
+                                }
                             }
-                            else {
-                                _this.success(validateImmediately);
+                            else if (elToTest.value) {
+                                if (!elToTest.value || elToTest.value == '') {
+                                    _this.empty(validateImmediately);
+                                }
+                                else {
+                                    _this.success(validateImmediately);
+                                }
                             }
                         }
                         else {
@@ -626,8 +650,7 @@ var CheckBoxValidator = (function () {
             }
             _this._container.classList.add('validated');
             checkForAllValidated(_this._element, _this._settings);
-            document.addEventListener('click', _this.clear);
-            //this._container.addEventListener('blur',function(){that.clear()});
+            document.addEventListener('click', _this.clear(event));
         };
         this.fail = function (validateImmediately) {
             if (validateImmediately)
@@ -641,7 +664,9 @@ var CheckBoxValidator = (function () {
             _this._container.classList.remove('validated');
             checkForAllValidated(_this._element, _this._settings);
         };
-        this.clear = function () {
+        this.clear = function (event) {
+            if (!event)
+                event = window.event;
             var a = event.target;
             var els = [];
             while (a) {
@@ -710,8 +735,7 @@ var RadioButtonValidator = (function () {
             }
             _this._container.classList.add('validated');
             checkForAllValidated(_this._element, _this._settings);
-            document.addEventListener('click', _this.clear);
-            //this._container.addEventListener('blur',function(){that.clear()});
+            document.addEventListener('click', _this.clear(event));
         };
         this.fail = function (validateImmediately) {
             _this._container.parentNode.classList.add(_this._rules.empty["class"]);
@@ -727,7 +751,9 @@ var RadioButtonValidator = (function () {
             //checkForAllValidated(this._element, this._settings);
             disableSubmit(_this._element);
         };
-        this.clear = function () {
+        this.clear = function (event) {
+            if (!event)
+                event = window.event;
             var a = event.target;
             var els = [];
             while (a) {

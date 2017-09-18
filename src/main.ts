@@ -2,7 +2,7 @@
 
 
 class Config {
-    public static version: string = '0.3.8';
+    public static version: string = '0.3.9';
     public static ver(): void {
         console.log(this.version);
     }
@@ -487,13 +487,17 @@ class Validator {
         if(altElement) this.altElement = altElement;
         let elToTest = this.altElement || this.element;
         try {
-            elToTest.value = trimValue(elToTest);
+            if(elToTest.value){
+                elToTest.value = trimValue(elToTest);
+            }
         }
         catch (e){
             console.log(e);
         }
         try{
-            this.container.classList.add(this.rules.checking.class);
+            if(this.container){
+                this.container.classList.add(this.rules.checking.class);
+            }
         }
         catch(e){
            console.log(e); 
@@ -502,10 +506,19 @@ class Validator {
             if(elToTest.hasAttribute('data-validate-optional')){ // check to see if element is optional
                 if(elToTest.value == '' && this.settings.validateIfEmpty){
                     if(elToTest.tagName == 'SELECT') {
-                        if(!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
-                            this.success(validateImmediately);
-                        } else {
-                            this.success(validateImmediately);
+                        if(elToTest.selectedOptions){
+                            if(!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
+                                this.success(validateImmediately);
+                            } else {
+                                this.success(validateImmediately);
+                            }
+                        }
+                        else if(elToTest.value){
+                            if(!elToTest.value || elToTest.value == '') {
+                                this.success(validateImmediately);
+                            } else {
+                                this.success(validateImmediately);
+                            }
                         }
                     }
                     else {this.success(validateImmediately);}
@@ -517,10 +530,19 @@ class Validator {
             else {
                 if(elToTest.value == '' && this.settings.validateIfEmpty){
                     if(elToTest.tagName == 'SELECT') {
-                        if(!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
-                            this.empty(validateImmediately);
-                        } else {
-                            this.success(validateImmediately);
+                        if(elToTest.selectedOptions){
+                            if(!elToTest.selectedOptions.length || elToTest.selectedOptions.length < 1 || elToTest.selectedOptions[0].text == '') {
+                                this.empty(validateImmediately);
+                            } else {
+                                this.success(validateImmediately);
+                            }
+                        }
+                        else if(elToTest.value){
+                            if(!elToTest.value || elToTest.value == '') {
+                                this.empty(validateImmediately);
+                            } else {
+                                this.success(validateImmediately);
+                            }
                         }
                     }
                     else {this.empty(validateImmediately);}
@@ -639,8 +661,7 @@ class CheckBoxValidator {
         }
         this._container.classList.add('validated');
         checkForAllValidated(this._element, this._settings);
-        document.addEventListener('click',this.clear);
-        //this._container.addEventListener('blur',function(){that.clear()});
+        document.addEventListener('click',this.clear(event));
 
     }
     private fail = (validateImmediately?: boolean):void => {
@@ -654,7 +675,8 @@ class CheckBoxValidator {
         this._container.classList.remove('validated');
         checkForAllValidated(this._element, this._settings);
     }
-    private clear = ():void => {
+    private clear = (event: any):void => {
+        if(!event) event = window.event;
         let a = event.target;
         var els = [];
         while (a) {
@@ -727,8 +749,7 @@ class RadioButtonValidator {
         }
         this._container.classList.add('validated');
         checkForAllValidated(this._element, this._settings);
-        document.addEventListener('click',this.clear);
-        //this._container.addEventListener('blur',function(){that.clear()});
+        document.addEventListener('click',this.clear(event));
 
     }
     private fail = (validateImmediately?: boolean):void => {
@@ -744,7 +765,8 @@ class RadioButtonValidator {
         //checkForAllValidated(this._element, this._settings);
         disableSubmit(this._element);
     }
-    private clear = ():void => {
+    private clear = (event: any):void => {
+        if(!event) event = window.event;
         let a = event.target;
         var els = [];
         while (a) {

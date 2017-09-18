@@ -212,4 +212,8 @@ $('form').hpsValidate('update');
 **Additions:**
     Added 'data-validate-optional' attribute.  See above for description
     Added getFailedElement() function to determine what element is failing validation.  This can be run in the console and will echo the element that failed.
+
+### 0.3.9
+**Bug Fixes**
+Now handling events in Firefox
 ## See samples in [index](../index.html)
