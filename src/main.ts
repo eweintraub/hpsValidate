@@ -810,6 +810,7 @@ var checkForOneOrMultipleFields = function(el: any, type: string, rules: any){
         if(el.hasAttribute('data-validate-optional')){ e.setAttribute('data-validate-optional', 'true' ); } 
         e.setAttribute('data-validate',type);
         e.style.display = 'none';
+        // Will need to add ability to skip validation on hidden-for-multi fields
         e.classList.add('hidden-for-multi');
         let last = count - 1;
         l[last].parentNode.appendChild(e);
