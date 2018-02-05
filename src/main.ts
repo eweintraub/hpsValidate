@@ -979,21 +979,30 @@ var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boo
         parentWrapper.classList.remove(rules.checking.class);
         if (success) {
             el.classList.add('validated');
-            if(validateImmediately) parentWrapper.classList.add(rules.success.class);
-        } else {
-            parentWrapper.classList.remove(rules.success.class);
+            if(validateImmediately) {
+                parentWrapper.classList.add(rules.success.class);
+            } 
+            else {
+                parentWrapper.classList.remove(rules.success.class);
+            }
         }
         if(empty){
-            if(validateImmediately) parentWrapper.classList.add(rules.empty.class);
-        } else {
-            parentWrapper.classList.remove(rules.empty.class);
+            if(validateImmediately) {
+                parentWrapper.classList.add(rules.empty.class);
+            } 
+            else {
+                parentWrapper.classList.remove(rules.empty.class);
+            }
         }
         if(fail){
             parentWrapper.classList.add(rules.failed.class);
-        } else {
+        } 
+        else {
             parentWrapper.classList.remove(rules.failed.class);
         }
-        if(empty || fail) el.classList.remove('validated');
+        if(empty || fail) {
+            el.classList.remove('validated');
+        }
         checkForAllValidated(el, settings);
 }
 

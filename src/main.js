@@ -961,18 +961,20 @@ var UpdateFieldValidationStatus = function (el, rules, settings, empty, success,
     parentWrapper.classList.remove(rules.checking["class"]);
     if (success) {
         el.classList.add('validated');
-        if (validateImmediately)
+        if (validateImmediately){
             parentWrapper.classList.add(rules.success["class"]);
-    }
-    else {
-        parentWrapper.classList.remove(rules.success["class"]);
+        }
+        else {
+            parentWrapper.classList.remove(rules.success["class"]);
+        }
     }
     if (empty) {
-        if (validateImmediately)
+        if (validateImmediately){
             parentWrapper.classList.add(rules.empty["class"]);
-    }
-    else {
-        parentWrapper.classList.remove(rules.empty["class"]);
+        }
+        else {
+            parentWrapper.classList.remove(rules.empty["class"]);
+        }
     }
     if (fail) {
         parentWrapper.classList.add(rules.failed["class"]);
@@ -980,8 +982,9 @@ var UpdateFieldValidationStatus = function (el, rules, settings, empty, success,
     else {
         parentWrapper.classList.remove(rules.failed["class"]);
     }
-    if (empty || fail)
+    if (empty || fail){
         el.classList.remove('validated');
+    }
     checkForAllValidated(el, settings);
 };
 var addErrorMessage = function (element, message) {
