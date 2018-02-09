@@ -2,7 +2,7 @@
 
 
 class Config {
-    public static version: string = '0.3.9';
+    public static version: string = '0.3.10';
     public static ver(): void {
         console.log(this.version);
     }
@@ -981,6 +981,8 @@ var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boo
             el.classList.add('validated');
             if(validateImmediately) {
                 parentWrapper.classList.add(rules.success.class);
+                parentWrapper.classList.remove(rules.empty.class);
+                parentWrapper.classList.remove(rules.failed.class);
             } 
             else {
                 parentWrapper.classList.remove(rules.success.class);
@@ -989,6 +991,8 @@ var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boo
         if(empty){
             if(validateImmediately) {
                 parentWrapper.classList.add(rules.empty.class);
+                parentWrapper.classList.remove(rules.success.class);
+                parentWrapper.classList.remove(rules.failed.class);
             } 
             else {
                 parentWrapper.classList.remove(rules.empty.class);
@@ -996,6 +1000,8 @@ var UpdateFieldValidationStatus = (el: any, rules:any, settings: any, empty: boo
         }
         if(fail){
             parentWrapper.classList.add(rules.failed.class);
+            parentWrapper.classList.remove(rules.empty.class);
+                parentWrapper.classList.remove(rules.success.class);
         } 
         else {
             parentWrapper.classList.remove(rules.failed.class);

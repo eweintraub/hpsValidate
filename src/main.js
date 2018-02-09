@@ -1,14 +1,14 @@
 /// <reference path="index.d.ts" />
-var Config = (function () {
+var Config = /** @class */ (function () {
     function Config() {
     }
     Config.ver = function () {
         console.log(this.version);
     };
+    Config.version = '0.3.10';
     return Config;
 }());
-Config.version = '0.3.9';
-var ValidatorConfig = (function () {
+var ValidatorConfig = /** @class */ (function () {
     function ValidatorConfig(r) {
         this.ValidationSettings = {
             identifier: '',
@@ -442,7 +442,7 @@ var createValidator = function (v, element, validateNow) {
             validateNow ? va.validate(true, element) : va.load(element);
     }
 };
-var Validator = (function () {
+var Validator = /** @class */ (function () {
     function Validator(rules, settings) {
         var _this = this;
         this.load = function (el, altElement) {
@@ -600,7 +600,7 @@ var Validator = (function () {
     }
     return Validator;
 }());
-var CheckBoxValidator = (function () {
+var CheckBoxValidator = /** @class */ (function () {
     function CheckBoxValidator(element, rules, settings) {
         var _this = this;
         this.ConfigureSubmitButton = function () {
@@ -685,7 +685,7 @@ var CheckBoxValidator = (function () {
     }
     return CheckBoxValidator;
 }());
-var RadioButtonValidator = (function () {
+var RadioButtonValidator = /** @class */ (function () {
     function RadioButtonValidator(element, rules, settings) {
         var _this = this;
         this.ConfigureSubmitButton = function () {
@@ -795,25 +795,26 @@ var checkForOneOrMultipleFields = function (el, type, rules) {
     var l = parentWrapper.querySelectorAll('[data-validate]');
     var count = parentWrapper.querySelectorAll('[data-validate]').length;
     if (count > 1) {
-        var e_1 = document.createElement('input');
+        var e = document.createElement('input');
         if (el.hasAttribute('data-validate-optional')) {
-            e_1.setAttribute('data-validate-optional', 'true');
+            e.setAttribute('data-validate-optional', 'true');
         }
-        e_1.setAttribute('data-validate', type);
-        e_1.style.display = 'none';
-        e_1.classList.add('hidden-for-multi');
+        e.setAttribute('data-validate', type);
+        e.style.display = 'none';
+        // Will need to add ability to skip validation on hidden-for-multi fields
+        e.classList.add('hidden-for-multi');
         var last = count - 1;
-        l[last].parentNode.appendChild(e_1);
+        l[last].parentNode.appendChild(e);
         for (var x = 0; x < count; ++x) {
             l[x].removeAttribute('data-validate');
             l[x].parentNode.classList.remove(rules.checking["class"]);
             l[x].parentNode.classList.remove(rules.success["class"]);
             l[x].parentNode.classList.remove(rules.failed["class"]);
             l[x].classList.add('do-not-validate');
-            l[x].addEventListener('keyup', function () { concatinateInHiddenField(l, e_1); });
-            l[x].addEventListener('click', function () { concatinateInHiddenField(l, e_1); });
+            l[x].addEventListener('keyup', function () { concatinateInHiddenField(l, e); });
+            l[x].addEventListener('click', function () { concatinateInHiddenField(l, e); });
         }
-        return e_1;
+        return e;
     }
     return false;
 };
@@ -961,7 +962,7 @@ var UpdateFieldValidationStatus = function (el, rules, settings, empty, success,
     parentWrapper.classList.remove(rules.checking["class"]);
     if (success) {
         el.classList.add('validated');
-        if (validateImmediately){
+        if (validateImmediately) {
             parentWrapper.classList.add(rules.success["class"]);
         }
         else {
@@ -969,7 +970,7 @@ var UpdateFieldValidationStatus = function (el, rules, settings, empty, success,
         }
     }
     if (empty) {
-        if (validateImmediately){
+        if (validateImmediately) {
             parentWrapper.classList.add(rules.empty["class"]);
         }
         else {
@@ -982,7 +983,7 @@ var UpdateFieldValidationStatus = function (el, rules, settings, empty, success,
     else {
         parentWrapper.classList.remove(rules.failed["class"]);
     }
-    if (empty || fail){
+    if (empty || fail) {
         el.classList.remove('validated');
     }
     checkForAllValidated(el, settings);
