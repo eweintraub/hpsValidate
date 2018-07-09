@@ -675,7 +675,7 @@ class CheckBoxValidator {
         this._container.classList.remove('validated');
         checkForAllValidated(this._element, this._settings);
     }
-    private clear = (event: any):void => {
+    private clear = (event: any):any => {
         if(!event) event = window.event;
         let a = event.target;
         var els = [];
@@ -765,7 +765,7 @@ class RadioButtonValidator {
         //checkForAllValidated(this._element, this._settings);
         disableSubmit(this._element);
     }
-    private clear = (event: any):void => {
+    private clear = (event: any):any => {
         if(!event) event = window.event;
         let a = event.target;
         var els = [];
