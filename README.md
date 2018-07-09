@@ -216,4 +216,8 @@ $('form').hpsValidate('update');
 ### 0.3.9
 **Bug Fixes**
 Now handling events in Firefox
+
+### 0.3.10
+**Bug Fixes**
+Resolved issue with success functions not triggering.
 ## See samples in [index](../index.html)
